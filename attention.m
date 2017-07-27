@@ -8,8 +8,8 @@ clc;
 
 Screen('Preference', 'SkipSyncTests', 1);
 RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
-[window, rect] = Screen('OpenWindow', 0); 
-Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+[window, rect] = Screen('OpenWindow', 0);
+Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 HideCursor();
 
 window_w = rect(3);
@@ -20,9 +20,15 @@ audios = {}
 cd AudioStimuli
 names = dir('*.wav');
 for i = 1:length(names)
-   audios{i} = audioread(names(i).name); 
+    audios{i} = audioread(names(i).name);
 end
 cd ..;
+toneLength = 0:1/44100:.300;
+freqRamp = 1/(2*(.01));
+rampVector = [1:441];
+fs = 44100;
+offset = (1+sin(2*pi*freqRamp*rampVector./fs + (pi/2)))/2;
+onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
 %% Constants and global variables
 
 % Experiment
@@ -57,10 +63,10 @@ offset = (1 + sin(2 * pi * freqRamp * rampVector ./ fs + (pi/2))) / 2;
 onset = (1 + sin(2 * pi * freqRamp * rampVector ./ fs + (-pi/2))) / 2;
 frequencies = cell(1, 127);
 
-for k = 1:127 
+for k = 1:127
     toneFrequency = 440 * 2 ^ ((k - 69)/12);
     midiTones = sin(2 * pi * toneFrequency * toneLength);
-    midiTones(1:441) = onset .* midiTones(1:441); 
+    midiTones(1:441) = onset .* midiTones(1:441);
     midiTones((end - 440):end) = offset .* midiTones((end - 440):end);
     frequencies{k} = repmat(midiTones, 2, 1);
 end
@@ -95,3 +101,33 @@ cd(['participant_data/', subjectData{1}]);
 save('data', 'subjectData');
 cd('..');
 cd('..');
+
+
+function playAudio(m)
+handle = PsychPortAudio('Open', [], [], 0, 44100, 2); 
+
+toneLength = 0:1/44100:.300;
+freqRamp = 1/(2*(.01));
+rampVector = [1:441];
+fs = 44100;
+offset = (1+sin(2*pi*freqRamp*rampVector./fs + (pi/2)))/2;
+onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
+    if ~isscalar(m)
+        if size(m, 2) < size(m, 1)
+            m = m';
+        end
+        newm = repmat(m,2,1);
+        PsychPortAudio('FillBuffer', handle, newm);
+        PsychPortAudio('Start', handle, 1, 0, 1);
+    else
+        toneFrequency = 440*2^((m-69)/12);
+        midiTone = sin(2*pi* toneFrequency * toneLength);%creating the tones in terms of frequency
+        midiTone(1:441) = onset .* midiTone(1:441);
+        midiTone(end - 440: end) = offset .* midiTone(end - 440: end);
+        newm = repmat(midiTone, 2, 1); %duplicates the sound in order to hear through headphones
+        PsychPortAudio('FillBuffer', handle, newm);
+        PsychPortAudio('Start', handle, 1, 0, 1);
+    end
+
+end
+
