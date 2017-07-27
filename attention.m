@@ -12,11 +12,9 @@ RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
 Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 HideCursor();
 
-window_w = rect(3);
-window_h = rect(4);
-center_x = window_w / 2;
-center_y = window_h / 2;
-
+windowX = rect(3);
+windowY = rect(4);
+center = [windowX/2, windowY/2];
 %% Constants and global variables
 
 % Experiment
@@ -60,6 +58,20 @@ for k = 1:127
 end
 
 %% Counterbalance conditions
+
+highlow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
+outlierDiff = outlierRange(mod(randperm(numTrials), 4) + 1);
+outlierPos = mod(randperm(numTrials), 7) + 1;
+
+for i = 1:numTrial
+    if highlow(i) == 0
+    outlierDiff(i) = -outlierDiff(i);
+    end
+end
+
+counterbalancing = [outlierDiff; outlierPos];
+subjectData{5} = counterbalancing;
+
 
 %% Subject data input
 
