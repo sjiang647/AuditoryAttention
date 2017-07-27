@@ -1,3 +1,4 @@
+
 %% Objective: Test effects of attention on auditory ensemble perception
 
 clear all;
@@ -20,10 +21,15 @@ cd AudioStimuli
 names = dir('*.wav');
 audios = cell(length(names));
 for i = 1:length(names)
-   audios{i} = audioread(names(i).name); 
+    audios{i} = audioread(names(i).name);
 end
 cd ..;
-
+% toneLength = 0:1/44100:.300;
+% freqRamp = 1/(2*(.01));
+% rampVector = [1:441];
+% fs = 44100;
+% offset = (1+sin(2*pi*freqRamp*rampVector./fs + (pi/2)))/2;
+% onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
 %% Constants and global variables
 
 % Experiment
@@ -38,11 +44,13 @@ toneRange = [2 4 6];
 outlierRange = [6 8 10 12];
 
 % Auditory frequency generation
+
 fs = 44100;
 toneDuration = 0.300;
 toneLength = 0:1/fs:toneDuration;
 freqRamp = 1/(2*.01);
 rampVector = 1:441;
+
 
 % Data saving
 data = zeros(1, numTrials);
@@ -133,26 +141,29 @@ for trial = 1:numTrial
     end
     
     if trialSettings(3)
-        % Play audio
+        % Audio task instructions
+        Screen('DrawText', window, 'You will now hear a test tone.', center_x - 250, center_y - 25);
+        Screen('DrawText', window, 'Press any key to continue.', center_x - 250, center_y);
+        Screen('Flip', window);
+        
+        % Play audio tone
         offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
         PsychPortAudio('Start', handle, 1, 0, 1);
         WaitSecs(tonePause);
         PsychPortAudio('Stop', handle);
         
-        % Give instructions
-        Screen('DrawText', window, 'Press h if the tone was higher than the mean.', center_x - 250, center_y - 25);
-        Screen('DrawText', window, 'Press l if the tone was lower than the mean.', center_x - 250, center_y);
+        % Keyboard instructions
+        Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center_x - 250, center_y - 25);
+        Screen('DrawText', window, 'Press l if the test tone was lower than the mean.', center_x - 250, center_y);
         Screen('Flip', window);
-
+        
+        % Check keyboard presses
         KbName('UnifyKeyNames');
-
         while true
-            % Check which key was pressed
-            [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1); % -1 represents the defaut device
+            [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1); 
             key = KbName(find(keyCode));
 
-            % Record response if one of the two keys is pressed
             if strcmp(key, 'h')
                 response = 'h';
                 break;
@@ -163,7 +174,7 @@ for trial = 1:numTrial
             end
         end
         % Check accuracy of response
-        if (response == 'h' && trialSettings(1)) || (response == 'l' && ~trialSettings(1))
+        if (response == 'h' && trialSettings(2)) || (response == 'l' && ~trialSettings(2))
             data(trial) = 1;
         end
     else
@@ -193,7 +204,34 @@ if ~isdir(['participant_data/', subjectData{1}])
     mkdir(['participant_data/', subjectData{1}]);
 end
 
-cd(['participant_data/', subjectData{1}]);
-save('data', 'subjectData');
-cd('..');
-cd('..');
+function playAudio(m)
+handle = PsychPortAudio('Open', [], [], 0, 44100, 2); 
+
+toneLength = 0:1/44100:.300;
+freqRamp = 1/(2*(.01));
+rampVector = [1:441];
+fs = 44100;
+offset = (1+sin(2*pi*freqRamp*rampVector./fs + (pi/2)))/2;
+onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
+    if ~isscalar(m)
+        if size(m, 2) < size(m, 1)
+            m = m';
+        end
+        newm = repmat(m,2,1);
+        PsychPortAudio('FillBuffer', handle, newm);
+        PsychPortAudio('Start', handle, 1, 0, 1);
+        WaitSecs(.3)
+        PsychPortAudio('Stop', handle);
+    else
+        toneFrequency = 440*2^((m-69)/12);
+        midiTone = sin(2*pi* toneFrequency * toneLength);%creating the tones in terms of frequency
+        midiTone(1:441) = onset .* midiTone(1:441);
+        midiTone(end - 440: end) = offset .* midiTone(end - 440: end);
+        newm = repmat(midiTone, 2, 1); %duplicates the sound in order to hear through headphones
+        PsychPortAudio('FillBuffer', handle, newm);
+        PsychPortAudio('Start', handle, 1, 0, 1);
+        WaitSecs(.3)
+        PsychPortAudio('Stop', handle);
+    end
+
+end
