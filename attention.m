@@ -13,9 +13,9 @@ RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
 Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 HideCursor();
 
-window_w = rect(3);
-window_h = rect(4);
-center = [window_w/2, window_h/2];
+windowX = rect(3);
+windowY = rect(4);
+center = [windowX/2, windowY/2];
 
 cd AudioStimuli
 names = dir('*.wav');
@@ -50,7 +50,6 @@ toneDuration = 0.300;
 toneLength = 0:1/fs:toneDuration;
 freqRamp = 1/(2*.01);
 rampVector = 1:441;
-
 
 % Data saving
 data = zeros(1, numTrials);
@@ -127,9 +126,9 @@ for trial = 1:numTrial
     
     % Display instructions
     if trialSettings(1)
-        Screen('DrawText', window, 'Focus to the 6 tones.', center_x - 150, center_y);
+        Screen('DrawText', window, 'Focus to the 6 tones.', center(1) - 150, center(2));
     else
-        Screen('DrawText', window, 'Focus on the words.', center_x - 150, center_y);
+        Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
     end
     
     % Loop through and play all tones
@@ -142,8 +141,8 @@ for trial = 1:numTrial
     
     if trialSettings(3)
         % Audio task instructions
-        Screen('DrawText', window, 'You will now hear a test tone.', center_x - 250, center_y - 25);
-        Screen('DrawText', window, 'Press any key to continue.', center_x - 250, center_y);
+        Screen('DrawText', window, 'You will now hear a test tone.', center(1) - 250, center(2) - 25);
+        Screen('DrawText', window, 'Press any key to continue.', center(1) - 250, center(2));
         Screen('Flip', window);
         
         % Play audio tone
@@ -154,8 +153,8 @@ for trial = 1:numTrial
         PsychPortAudio('Stop', handle);
         
         % Keyboard instructions
-        Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center_x - 250, center_y - 25);
-        Screen('DrawText', window, 'Press l if the test tone was lower than the mean.', center_x - 250, center_y);
+        Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center(1) - 250, center(2) - 25);
+        Screen('DrawText', window, 'Press l if the test tone was lower than the mean.', center(1) - 250, center(2));
         Screen('Flip', window);
         
         % Check keyboard presses
@@ -203,6 +202,8 @@ Screen('CloseAll');
 if ~isdir(['participant_data/', subjectData{1}])
     mkdir(['participant_data/', subjectData{1}]);
 end
+
+%% Functions
 
 function playAudio(m)
 handle = PsychPortAudio('Open', [], [], 0, 44100, 2); 
