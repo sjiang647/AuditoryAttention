@@ -38,7 +38,7 @@ tonePause = 0.300;
 trialPause = 0.500;
 
 % Auditory tone generation
-numTones = 7;
+numTones = 6;
 meanRange = 48:72;
 toneRange = [2 4 6];
 outlierRange = [6 8 10 12];
@@ -108,7 +108,7 @@ KbWait([], 2);
 
 handle = PsychPortAudio('Open', [], [], 0, 44100, 2); 
 
-for trial = 1:numTrial
+for trial = 1:numTrials
     Screen('Flip', window);
     
     meanDiff = 2;
@@ -119,7 +119,6 @@ for trial = 1:numTrial
     % Randomly shuffle tones to be played
     meanTone = randsample(meanRange, 1);
     tones = randsample([-toneRange toneRange], numTones); 
-    toneVectors = freq(allTones + tones);
     
     %creating set of sounds 
     numSounds = 3;
@@ -127,35 +126,36 @@ for trial = 1:numTrial
     
     % Display instructions
     if trialSettings(1)
-        Screen('DrawText', window, 'Focus to the 6 tones.', center_x - 150, center_y);
+        Screen('DrawText', window, 'Focus to the 6 tones.', center(1) - 150, center(2));
     else
-        Screen('DrawText', window, 'Focus on the words.', center_x - 150, center_y);
+        Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
     end
     
     % Loop through and play all tones
     for toneNum = 1:numTones
-        PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
-        PsychPortAudio('Start', handle, 1, 0, 1);
-        WaitSecs(tonePause);
-        PsychPortAudio('Stop', handle);
+        playAudio(audios{setSounds(toneNum)});
+        WaitSecs(.3);
+        playAudio(tones(toneNum));  
     end
     
     if trialSettings(3)
         % Audio task instructions
-        Screen('DrawText', window, 'You will now hear a test tone.', center_x - 250, center_y - 25);
-        Screen('DrawText', window, 'Press any key to continue.', center_x - 250, center_y);
+        Screen('DrawText', window, 'You will now hear a test tone.', center(1) - 250, center(2) - 25);
+        Screen('DrawText', window, 'Press any key to continue.', center(1)- 250, center(2));
         Screen('Flip', window);
         
         % Play audio tone
         offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
-        PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
-        PsychPortAudio('Start', handle, 1, 0, 1);
-        WaitSecs(tonePause);
-        PsychPortAudio('Stop', handle);
+        playAudio(offtone);
+        
+%         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
+%         PsychPortAudio('Start', handle, 1, 0, 1);
+%         WaitSecs(tonePause);
+%         PsychPortAudio('Stop', handle);
         
         % Keyboard instructions
-        Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center_x - 250, center_y - 25);
-        Screen('DrawText', window, 'Press l if the test tone was lower than the mean.', center_x - 250, center_y);
+        Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center(1) - 250, center(2) - 25);
+        Screen('DrawText', window, 'Press l if the test tone was lower than the mean.', center(1) - 250, center(2));
         Screen('Flip', window);
         
         % Check keyboard presses
@@ -220,8 +220,6 @@ onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
         newm = repmat(m,2,1);
         PsychPortAudio('FillBuffer', handle, newm);
         PsychPortAudio('Start', handle, 1, 0, 1);
-        WaitSecs(.3)
-        PsychPortAudio('Stop', handle);
     else
         toneFrequency = 440*2^((m-69)/12);
         midiTone = sin(2*pi* toneFrequency * toneLength);%creating the tones in terms of frequency
@@ -230,8 +228,6 @@ onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
         newm = repmat(midiTone, 2, 1); %duplicates the sound in order to hear through headphones
         PsychPortAudio('FillBuffer', handle, newm);
         PsychPortAudio('Start', handle, 1, 0, 1);
-        WaitSecs(.3)
-        PsychPortAudio('Stop', handle);
     end
 
 end
