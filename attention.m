@@ -6,11 +6,11 @@ clc;
 
 %% Screen setup
 
-Screen('Preference', 'SkipSyncTests', 1);
-RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
-[window, rect] = Screen('OpenWindow', 0); 
-Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-HideCursor();
+% Screen('Preference', 'SkipSyncTests', 1);
+% RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
+ [window, rect] = Screen('OpenWindow', 0); 
+% Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+% HideCursor();
 
 windowX = rect(3);
 windowY = rect(4);
@@ -59,20 +59,38 @@ end
 
 %% Counterbalance conditions
 
+%counterbalancing [3, numTrials] what to ask, test tone high or lower, what to focus on 
+
+
+askWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+meanDiff = meanRange(mod(randperm(numTrials), 4) +1);
+meanPos = mod(randperm(numTrials), 7) +1;
+
 highlow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
 outlierDiff = outlierRange(mod(randperm(numTrials), 4) + 1);
 outlierPos = mod(randperm(numTrials), 7) + 1;
 
-for i = 1:numTrial
+focusWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+focusDiff = meanRange(mod(randperm(numTrials), 4) +1);
+focusPos = mod(randperm(numTrials), 7) +1;
+
+for i = 1:numTrials
+    if askWhat(i) == 0
+    meanDiff(i) = -meanDiff(i);
+    end
     if highlow(i) == 0
     outlierDiff(i) = -outlierDiff(i);
     end
+    if focusWhat(i) == 0
+    focusDiff(i) = -focusDiff(i);
+    end
 end
 
-counterbalancing = [outlierDiff; outlierPos];
+counterbalancing{1,:} = [meanDiff; meanPos];
+counterbalancing{2,:} = [outlierDiff; outlierPos];
+counterbalancing{3,:} = [focusDiff; focusDiff];
 subjectData{5} = counterbalancing;
-
-
+    
 %% Subject data input
 
 subjectData{1} = Ask(window, 'First Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
