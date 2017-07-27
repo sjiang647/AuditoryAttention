@@ -16,7 +16,13 @@ window_w = rect(3);
 window_h = rect(4);
 center_x = window_w / 2;
 center_y = window_h / 2;
-
+audios = {}
+cd AudioStimuli
+names = dir('*.wav');
+for i = 1:length(names)
+   audios{i} = audioread(names(i).name); 
+end
+cd ..;
 %% Constants and global variables
 
 % Experiment
