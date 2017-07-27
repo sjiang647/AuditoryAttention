@@ -90,6 +90,8 @@ subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, Rec
 
 %% Task instructions
 
+
+
 %% Stimuli display (experiment)
 
 handle = PsychPortAudio('Open', [], [], 0, 44100, 2); 
@@ -157,8 +159,13 @@ for trial = 1:numTrial
             data(trial) = 1;
         end
     else
-        % Ask for words
-        
+        % Ask for number of times words played
+        while true
+            ans = Ask(window, 'How  many times was the word played (1-9): ', [],[], 'GetChar', RectLeft, RectTop, 25);
+            if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')||(ans=='7')||(ans=='8')||(ans=='9')
+                break;
+            end 
+        end
     end
 
     WaitSecs(trialPause);
