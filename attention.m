@@ -16,13 +16,15 @@ window_w = rect(3);
 window_h = rect(4);
 center_x = window_w / 2;
 center_y = window_h / 2;
-audios = {}
+
 cd AudioStimuli
 names = dir('*.wav');
+audios = cell(length(names));
 for i = 1:length(names)
    audios{i} = audioread(names(i).name); 
 end
 cd ..;
+
 %% Constants and global variables
 
 % Experiment
@@ -66,6 +68,18 @@ for k = 1:127
 end
 
 %% Counterbalance conditions
+
+askWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+highLow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
+focusWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+
+for i = 1:numTrials
+    counterbalancing(1,i) = askWhat(i);
+    counterbalancing(2,i) = highLow(i);
+    counterbalancing(3,i) = focusWhat(i);
+end
+
+subjectData{5} = counterbalancing;
 
 %% Subject data input
 
