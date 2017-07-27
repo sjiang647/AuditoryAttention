@@ -135,8 +135,8 @@ for trial = 1:numTrials
     % Loop through and play all tones
     for toneNum = 1:numTones
         playAudio(audios{setSounds(toneNum)});
-        WaitSecs(.3);
-        playAudio(tones(toneNum));  
+        WaitSecs(1);
+        playAudio(tones(toneNum) + meanTone);  
     end
     
     if trialSettings(3)
