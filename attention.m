@@ -59,24 +59,17 @@ end
 
 %% Counterbalance conditions
 
-
-%counterbalancing [3, numTrials] what to ask, test tone high or lower, what to focus on 
+askWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+highLow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
+focusWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
 
 for i = 1:numTrials
-    askWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
-    highLow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
-    focusWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
-    counterbalancing(1,i) = askWhat;
-    counterbalancing(2,i) = highLow;
-    counterbalancing(3,i) = focusWhat;
+    counterbalancing(1,i) = askWhat(i);
+    counterbalancing(2,i) = highLow(i);
+    counterbalancing(3,i) = focusWhat(i);
 end
 
 subjectData{5} = counterbalancing;
-
-% matrix of 3xNumTrials
-%numtrials 1 column --> what to ask 
-% 2nd column --> high or lower than th test tone 
-% 3rd column --> what they focus on 
 
 %% Subject data input
 
