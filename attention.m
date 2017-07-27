@@ -131,6 +131,7 @@ for trial = 1:numTrials
         Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
     end
     
+    
     % Loop through and play all tones
     for toneNum = 1:numTones
         playAudio(audios{setSounds(toneNum)});
