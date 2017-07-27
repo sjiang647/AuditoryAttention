@@ -123,26 +123,29 @@ for trial = 1:numTrial
     end
     
     if trialSettings(3)
-        % Play audio
+        % Audio task instructions
+        Screen('DrawText', window, 'You will now hear a test tone.', center_x - 250, center_y - 25);
+        Screen('DrawText', window, 'Press any key to continue.', center_x - 250, center_y);
+        Screen('Flip', window);
+        
+        % Play audio tone
         offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
         PsychPortAudio('Start', handle, 1, 0, 1);
         WaitSecs(tonePause);
         PsychPortAudio('Stop', handle);
         
-        % Give instructions
-        Screen('DrawText', window, 'Press h if the tone was higher than the mean.', center_x - 250, center_y - 25);
-        Screen('DrawText', window, 'Press l if the tone was lower than the mean.', center_x - 250, center_y);
+        % Keyboard instructions
+        Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center_x - 250, center_y - 25);
+        Screen('DrawText', window, 'Press l if the test tone was lower than the mean.', center_x - 250, center_y);
         Screen('Flip', window);
-
+        
+        % Check keyboard presses
         KbName('UnifyKeyNames');
-
         while true
-            % Check which key was pressed
-            [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1); % -1 represents the defaut device
+            [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1); 
             key = KbName(find(keyCode));
 
-            % Record response if one of the two keys is pressed
             if strcmp(key, 'h')
                 response = 'h';
                 break;
@@ -153,7 +156,7 @@ for trial = 1:numTrial
             end
         end
         % Check accuracy of response
-        if (response == 'h' && trialSettings(1)) || (response == 'l' && ~trialSettings(1))
+        if (response == 'h' && trialSettings(2)) || (response == 'l' && ~trialSettings(2))
             data(trial) = 1;
         end
     else
