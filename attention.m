@@ -62,34 +62,15 @@ end
 
 %counterbalancing [3, numTrials] what to ask, test tone high or lower, what to focus on 
 
-
-askWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
-meanDiff = meanRange(mod(randperm(numTrials), 4) +1);
-meanPos = mod(randperm(numTrials), 7) +1;
-
-highlow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
-outlierDiff = outlierRange(mod(randperm(numTrials), 4) + 1);
-outlierPos = mod(randperm(numTrials), 7) + 1;
-
-focusWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
-focusDiff = meanRange(mod(randperm(numTrials), 4) +1);
-focusPos = mod(randperm(numTrials), 7) +1;
-
 for i = 1:numTrials
-    if askWhat(i) == 0
-    meanDiff(i) = -meanDiff(i);
-    end
-    if highlow(i) == 0
-    outlierDiff(i) = -outlierDiff(i);
-    end
-    if focusWhat(i) == 0
-    focusDiff(i) = -focusDiff(i);
-    end
+    askWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+    highLow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
+    focusWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+    counterbalancing(1,i) = askWhat;
+    counterbalancing(2,i) = highLow;
+    counterbalancing(3,i) = focusWhat;
 end
 
-counterbalancing{1,:} = [meanDiff; meanPos];
-counterbalancing{2,:} = [outlierDiff; outlierPos];
-counterbalancing{3,:} = [focusDiff; focusDiff];
 subjectData{5} = counterbalancing;
 
 % matrix of 3xNumTrials
