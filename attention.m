@@ -6,17 +6,15 @@ clc;
 
 %% Screen setup
 
-Screen('Preference', 'SkipSyncTests', 1);
-RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
-[window, rect] = Screen('OpenWindow', 0); 
-Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-HideCursor();
+% Screen('Preference', 'SkipSyncTests', 1);
+% RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
+ [window, rect] = Screen('OpenWindow', 0); 
+% Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+% HideCursor();
 
-window_w = rect(3);
-window_h = rect(4);
-center_x = window_w / 2;
-center_y = window_h / 2;
-
+windowX = rect(3);
+windowY = rect(4);
+center = [windowX/2, windowY/2];
 %% Constants and global variables
 
 % Experiment
@@ -60,6 +58,18 @@ for k = 1:127
 end
 
 %% Counterbalance conditions
+
+askWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+highLow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
+focusWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+
+for i = 1:numTrials
+    counterbalancing(1,i) = askWhat(i);
+    counterbalancing(2,i) = highLow(i);
+    counterbalancing(3,i) = focusWhat(i);
+end
+
+subjectData{5} = counterbalancing;
 
 %% Subject data input
 
