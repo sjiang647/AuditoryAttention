@@ -59,7 +59,7 @@ end
 
 %% Counterbalance conditions
 
-highlow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
+highLow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
 outlierDiff = outlierRange(mod(randperm(numTrials), 4) + 1);
 outlierPos = mod(randperm(numTrials), 7) + 1;
 
@@ -71,7 +71,10 @@ end
 
 counterbalancing = [outlierDiff; outlierPos];
 subjectData{5} = counterbalancing;
-
+% matrix of 3xNumTrials
+%numtrials 1 column --> what to ask 
+% 2nd column --> high or lower than th test tone 
+% 3rd column --> what they focus on 
 
 %% Subject data input
 
