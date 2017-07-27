@@ -15,8 +15,8 @@ HideCursor();
 
 window_w = rect(3);
 window_h = rect(4);
-center_x = window_w / 2;
-center_y = window_h / 2;
+center = [window_w/2, window_h/2];
+
 cd AudioStimuli
 names = dir('*.wav');
 audios = cell(length(names));
@@ -96,6 +96,13 @@ subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTo
 subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
 
 %% Task instructions
+Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-420, center(2)-60);
+Screen('DrawText', window, 'At the end of each trial, you will be asked to make an input based on a question asked.', center(1)-450, center(2)-30);
+Screen('DrawText', window, 'Press any button to continue', center(1)-150, center(2));
+Screen('Flip', window); 
+KbWait([], 2);
+
+
 
 %% Stimuli display (experiment)
 
@@ -113,6 +120,10 @@ for trial = 1:numTrial
     meanTone = randsample(meanRange, 1);
     tones = randsample([-toneRange toneRange], numTones); 
     toneVectors = freq(allTones + tones);
+    
+    %creating set of sounds 
+    numSounds = 3;
+    setSounds = randsample(numSounds, 6, true); %creating a random set of sounds 
     
     % Display instructions
     if trialSettings(1)
@@ -167,8 +178,13 @@ for trial = 1:numTrial
             data(trial) = 1;
         end
     else
-        % Ask for words
-        
+        % Ask for number of times words played
+        while true
+            ans = Ask(window, 'How  many times was the word played (1-9): ', [],[], 'GetChar', RectLeft, RectTop, 25);
+            if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')||(ans=='7')||(ans=='8')||(ans=='9')
+                break;
+            end 
+        end
     end
 
     WaitSecs(trialPause);
