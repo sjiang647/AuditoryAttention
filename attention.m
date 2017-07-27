@@ -6,15 +6,25 @@ clc;
 
 %% Screen setup
 
-% Screen('Preference', 'SkipSyncTests', 1);
-% RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
- [window, rect] = Screen('OpenWindow', 0); 
-% Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-% HideCursor();
+Screen('Preference', 'SkipSyncTests', 1);
+RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
+[window, rect] = Screen('OpenWindow', 0); 
+Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+HideCursor();
 
-windowX = rect(3);
-windowY = rect(4);
-center = [windowX/2, windowY/2];
+window_w = rect(3);
+window_h = rect(4);
+center_x = window_w / 2;
+center_y = window_h / 2;
+
+cd AudioStimuli
+names = dir('*.wav');
+audios = cell(length(names));
+for i = 1:length(names)
+   audios{i} = audioread(names(i).name); 
+end
+cd ..;
+
 %% Constants and global variables
 
 % Experiment
@@ -82,8 +92,81 @@ subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, Rec
 
 %% Stimuli display (experiment)
 
+handle = PsychPortAudio('Open', [], [], 0, 44100, 2); 
+
+for trial = 1:numTrial
+    Screen('Flip', window);
+    
+    meanDiff = 2;
+    
+    % 1. what to ask 2. high/low % 
+    trialSettings = counterbalancing(:, trial);
+    
+    % Randomly shuffle tones to be played
+    meanTone = randsample(meanRange, 1);
+    tones = randsample([-toneRange toneRange], numTones); 
+    toneVectors = freq(allTones + tones);
+    
+    % Display instructions
+    if trialSettings(1)
+        Screen('DrawText', window, 'Focus to the 6 tones.', center_x - 150, center_y);
+    else
+        Screen('DrawText', window, 'Focus on the words.', center_x - 150, center_y);
+    end
+    
+    % Loop through and play all tones
+    for toneNum = 1:numTones
+        PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
+        PsychPortAudio('Start', handle, 1, 0, 1);
+        WaitSecs(tonePause);
+        PsychPortAudio('Stop', handle);
+    end
+    
+    if trialSettings(3)
+        % Play audio
+        offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
+        PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
+        PsychPortAudio('Start', handle, 1, 0, 1);
+        WaitSecs(tonePause);
+        PsychPortAudio('Stop', handle);
+        
+        % Give instructions
+        Screen('DrawText', window, 'Press h if the tone was higher than the mean.', center_x - 250, center_y - 25);
+        Screen('DrawText', window, 'Press l if the tone was lower than the mean.', center_x - 250, center_y);
+        Screen('Flip', window);
+
+        KbName('UnifyKeyNames');
+
+        while true
+            % Check which key was pressed
+            [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1); % -1 represents the defaut device
+            key = KbName(find(keyCode));
+
+            % Record response if one of the two keys is pressed
+            if strcmp(key, 'h')
+                response = 'h';
+                break;
+            end
+            if strcmp(key, 'l')
+                response = 'l';
+                break;
+            end
+        end
+        % Check accuracy of response
+        if (response == 'h' && trialSettings(1)) || (response == 'l' && ~trialSettings(1))
+            data(trial) = 1;
+        end
+    else
+        % Ask for words
+        
+    end
+
+    WaitSecs(trialPause);
+end
+
 %% End experiment
 
+PsychPortAudio('Close', handle);
 ShowCursor();
 Screen('CloseAll');
 
