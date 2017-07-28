@@ -30,8 +30,8 @@ cd('..');
 %% Constants and global variables
 
 % Experiment
-numTrials = 11;
-numTests = 3;
+numTrials = 200;
+numTests = 4;
 tonePause = 0.350;
 wordPause = 0.300;
 trialPause = 0.500;
@@ -126,7 +126,7 @@ for trial = 1:numTrials
         
         % Ask for number of times words played
         res = wordTaskInstructions(window, names(nameIndices(trial)).name, numTones);
-        subjectData{9}(trial) = res;
+        subjectData{9}(trial) = str2double(res);
     else
         %% Main Experiment
         showSingleInstructions(window, numTones, rect, 'sets of words and tones');
