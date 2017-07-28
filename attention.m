@@ -122,11 +122,14 @@ for trial = 1:numTrials
     % Display instructions
     if trialSettings(1)
         Screen('DrawText', window, 'Focus to the 6 tones.', center(1) - 150, center(2));
+        Screen('DrawText', window, 'Press any key to continue.', center(1)- 250, center(2));
         Screen('Flip', window);
+        KbWait;
     else
         Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
+        Screen('DrawText', window, 'Press any key to continue.', center(1)- 250, center(2));
         Screen('Flip', window);
-        
+        KbWait;
     end
     
     
@@ -156,8 +159,10 @@ for trial = 1:numTrials
         %         PsychPortAudio('Stop', handle);
         
         % Keyboard instructions
-        Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center(1) - 250, center(2) - 25);
-        Screen('DrawText', window, 'Press l if the test tone was lower than the mean.', center(1) - 250, center(2));
+        msgHigh = 'Press h if the test tone was higher than the mean.';
+        msgLow = 'Press l if the test tone was lower than the mean.'
+        Screen('DrawText', window, msgHigh, center(1) - length(msgHigh), center(2) - 25);
+        Screen('DrawText', window, msgLow, center(1) - length(msgLow), center(2));
         Screen('Flip', window);
         
         % Check keyboard presses
