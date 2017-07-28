@@ -135,6 +135,7 @@ for trial = 1:numTrials
         playAudio(audios{setSounds(toneNum)});
         WaitSecs(.3);
         playAudio(tones(toneNum) + meanTone);  
+        WaitSecs(.3);
     end
     
     if trialSettings(3)
