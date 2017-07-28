@@ -146,7 +146,7 @@ for trial = 1:numTrials
         Screen('Flip', window);
         
         KbWait();
-        
+
         % Play audio tone
         
         offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
