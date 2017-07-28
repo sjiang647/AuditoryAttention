@@ -183,12 +183,13 @@ for trial = 1:numTrials
         % Ask for number of times words played
         while true
             ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-            if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')||(ans=='7')||(ans=='8')||(ans=='9')
+            if length(ans) > 1
+                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            else 
                 break;
-            end
-        end
+            end 
+        end 
     end
-    
     WaitSecs(trialPause);
 end
 
