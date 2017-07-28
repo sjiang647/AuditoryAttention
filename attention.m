@@ -109,18 +109,18 @@ for trial = 1:numTrials
         showSingleInstructions(window, numTones, rect, 'audio tones');
         
         for toneNum = 1:numTones
-            playAudio(tones(toneNum) + meanTone);
+            playAudio(tones(toneNum) + meanTone, handle);
             WaitSecs(tonePause);
         end
         
-        audioTaskInstructions(window, rect, meanTone + testDist(trial));
+        audioTaskInstructions(window, rect, meanTone + testDist(trial), handle);
         data(trial) = analyzeHighLow(testDist(trial));
     elseif trial <= numTests * 2
         %% Words only
         showSingleInstructions(window, numTones, rect, 'words');
         
         for toneNum = 1:numTones
-            playAudio(audios{setSounds(trial, toneNum)});
+            playAudio(audios{setSounds(trial, toneNum)}, handle);
             WaitSecs(tonePause);
         end
         
@@ -147,14 +147,14 @@ for trial = 1:numTrials
         
         % Loop through and play all tones
         for toneNum = 1:numTones
-            playAudio(audios{setSounds(trial, toneNum)});
+            playAudio(audios{setSounds(trial, toneNum)}, handle);
             WaitSecs(wordPause);
-            playAudio(tones(toneNum) + meanTone);
+            playAudio(tones(toneNum) + meanTone, handle);
             WaitSecs(tonePause);
         end
         
         if askWhat(trial) % Play test tone
-            audioTaskInstructions(window, rect, meanTone + testDist(trial));
+            audioTaskInstructions(window, rect, meanTone + testDist(trial), handle);
             subjectData{6}(trial) = analyzeHighLow(testDist(trial));
         else % Ask for number of times words played
             index = find(names(nameIndices(trial)).name == '.');
@@ -206,7 +206,8 @@ end
 
 %% Task Instructions
 
-function audioTaskInstructions(window, rect, toneToPlay)
+function audioTaskInstructions(window, rect, toneToPlay, handle)
+    handel = handle;
     windowX = rect(3);
     windowY = rect(4);
     center = [windowX/2, windowY/2];
@@ -216,7 +217,7 @@ function audioTaskInstructions(window, rect, toneToPlay)
     Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2) + windowY/13);
     Screen('Flip', window);
     KbWait();
-    playAudio(toneToPlay);
+    playAudio(toneToPlay, handel);
 
     % Keyboard instructions
     Screen('DrawText', window, 'Press H if the test tone was higher than the mean.', center(1) - windowX/5, center(2) - windowY/13);
@@ -225,10 +226,11 @@ function audioTaskInstructions(window, rect, toneToPlay)
 end
 
 function response = wordTaskInstructions(window, nameToAsk, numTones)
-    while true
+thing = 1
+    while thing == 1
         res = Ask(window, ['How  many times was the word "' nameToAsk '" played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-        if ismember(str2double(res), 0:numTones)
-            break;
+        if ismember(str2double(res), [0:numTones])
+            thing = 2;
         else 
             res = Ask(window, ['How  many times was the word "' nameToAsk '" played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
         end 
@@ -264,9 +266,8 @@ end
 
 %% Audio playback
 
-function playAudio(m)
-    handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
-    
+function playAudio(m, handle)
+    handel = handle;
     fs = 44100;
     toneLength = 0:1/fs:.350;
     freqRamp = 1/(2*.01);
@@ -288,8 +289,8 @@ function playAudio(m)
         newm = repmat(midiTone, 2, 1); 
     end
     
-    PsychPortAudio('FillBuffer', handle, newm);
-    PsychPortAudio('Start', handle, 1, 0, 1);
+    PsychPortAudio('FillBuffer', handel, newm);
+    PsychPortAudio('Start', handel, 1, 0, 1);
 
 end
 
