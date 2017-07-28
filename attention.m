@@ -76,16 +76,12 @@ end
 
 %% Counterbalance conditions
 
-askWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
-highLow = mod(randperm(numTrials), 2); % 1 if high, 0 if low
-focusWhat = mod(randperm(numTrials), 2); % 1 if mean, 0 if word
+sequence = randperm(numTrials);
+askWhat = mod(sequence, 2); % 1 if mean, 0 if word
+highLow = floor(mod(sequence, 4) ./ 2); % 1 if high, 0 if low
+focusWhat = floor(mod(sequence, 8) ./ 4); % 1 if mean, 0 if word
 
-for i = 1:numTrials
-    counterbalancing(1,i) = askWhat(i);
-    counterbalancing(2,i) = highLow(i);
-    counterbalancing(3,i) = focusWhat(i);
-end
-
+counterbalancing = [askWhat; highLow; focusWhat];
 subjectData{5} = counterbalancing;
 
 %% Subject data input
