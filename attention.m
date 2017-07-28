@@ -146,10 +146,9 @@ for trial = 1:numTrials
         % Audio task instructions
         Screen('DrawText', window, 'You will now hear a test tone.', center(1) - 250, center(2) - 25);
         Screen('DrawText', window, 'Press any key to continue.', center(1)- 250, center(2));
-        Screen('Flip', window);
-        
+        Screen('Flip', window); 
         KbWait();
-        
+
         % Play audio tone
         
         offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
