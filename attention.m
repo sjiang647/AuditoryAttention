@@ -33,7 +33,7 @@ cd ..;
 %% Constants and global variables
 
 % Experiment
-numTrials = 5;
+numTrials = 11;
 tonePause = 0.300;
 trialPause = 0.500;
 
@@ -106,46 +106,27 @@ KbWait([], 2);
 handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
 
 for trial = 1:numTrials
-    Screen('Flip', window);
-    
-    meanDiff = 2;
-    
-    % 1. what to ask 2. test tone % 3. what to focus on
-    trialSettings = counterbalancing(:, trial);
-    
-    % Randomly shuffle tones to be played
-    meanTone = randsample(meanRange, 1);
-    tones = randsample([-toneRange toneRange], numTones);
-    
-    %creating set of sounds
-    numSounds = 3;
-    setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
-    
-    % Display instructions
-    if trialSettings(1)
+            meanDiff = 2;
+Screen('Flip', window);
+        trialSettings = counterbalancing(:, trial);
+
+    if trial < 4
+        meanTone = randsample(meanRange, 1);
+        tones = randsample([-toneRange toneRange], numTones);
+
         Screen('DrawText', window, 'Focus on the tones.', center(1) - 150, center(2));
         Screen('Flip', window);
-    else
-        Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
-        Screen('Flip', window);
+        KbWait();
+        for toneNum = 1:numTones
+            playAudio(tones(toneNum) + meanTone);
+            WaitSecs(.3);
+        end
         
-    end
-    
-    
-    % Loop through and play all tones
-    for toneNum = 1:numTones
-        playAudio(audios{setSounds(toneNum)});
-        WaitSecs(.3);
-        playAudio(tones(toneNum) + meanTone);
-        WaitSecs(.3);
-    end
-    
-    if trialSettings(3)
-        % Audio task instructions
         Screen('DrawText', window, 'You will now hear a test tone.', center(1) - 250, center(2) - 25);
         Screen('DrawText', window, 'Press "Return" to continue.', center(1)- 250, center(2));
-        Screen('Flip', window); 
+        Screen('Flip', window);
         KbWait();
+
         playAudio(meanTone + trialSettings(2));
         
         % Keyboard instructions
@@ -172,7 +153,19 @@ for trial = 1:numTrials
         if (response == 'h' && trialSettings(2)) || (response == 'l' && ~trialSettings(2))
             data(trial) = 1;
         end
-    else
+    elseif trial < 7
+        
+        numSounds = 3;
+        setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
+        
+        Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
+        Screen('Flip', window);
+        KbWait();
+        for toneNum = 1:numTones
+            playAudio(audios{setSounds(toneNum)});
+            WaitSecs(.3);
+        end
+        
         % Ask for number of times words played
         while true
             ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
@@ -180,8 +173,93 @@ for trial = 1:numTrials
                 break;
             end
         end
+        
+        
+    else
+        
+        
+        % 1. what to ask 2. high/low %
+        
+        % Randomly shuffle tones to be played
+        meanTone = randsample(meanRange, 1);
+        tones = randsample([-toneRange toneRange], numTones);
+        
+        %creating set of sounds
+        numSounds = 3;
+        setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
+        
+        % Display instructions
+        if trialSettings(1)
+            Screen('DrawText', window, 'Focus on the tones.', center(1) - 150, center(2));
+            Screen('Flip', window);
+            KbWait();
+        else
+            Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
+            Screen('Flip', window);
+            KbWait();
+            
+        end
+        
+        
+        % Loop through and play all tones
+        for toneNum = 1:numTones
+            playAudio(audios{setSounds(toneNum)});
+            WaitSecs(.3);
+            playAudio(tones(toneNum) + meanTone);
+            WaitSecs(.3);
+        end
+        
+        if trialSettings(3)
+            % Audio task instructions
+            Screen('DrawText', window, 'You will now hear a test tone.', center(1) - 250, center(2) - 25);
+            Screen('DrawText', window, 'Press "Return" to continue.', center(1)- 250, center(2));
+            Screen('Flip', window);
+            KbWait();
+            
+            % Play audio tone
+            
+            offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
+            playAudio(offtone);
+            
+            %         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
+            %         PsychPortAudio('Start', handle, 1, 0, 1);
+            %         WaitSecs(tonePause);
+            %         PsychPortAudio('Stop', handle);
+            
+            % Keyboard instructions
+            Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center(1) - 250, center(2) - 25);
+            Screen('DrawText', window, 'Press l if the test tone was lower than the mean.', center(1) - 250, center(2));
+            Screen('Flip', window);
+            
+            % Check keyboard presses
+            KbName('UnifyKeyNames');
+            while true
+                [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1);
+                key = KbName(find(keyCode));
+                
+                if strcmp(key, 'h')
+                    response = 'h';
+                    break;
+                end
+                if strcmp(key, 'l')
+                    response = 'l';
+                    break;
+                end
+            end
+            % Check accuracy of response
+            if (response == 'h' && trialSettings(2)) || (response == 'l' && ~trialSettings(2))
+                data(trial) = 1;
+            end
+        else
+            % Ask for number of times words played
+            while true
+                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')
+                    break;
+                end
+            end
+        end
     end
-    
     WaitSecs(trialPause);
 end
 
