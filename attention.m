@@ -119,14 +119,6 @@ for trial = 1:numTrials
         Screen('Flip', window);
         KbWait();
         Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/10, center(2));
-
-        
-        
-        l
-        
-        h
-        
-        l
         Screen('Flip', window);
         
         for toneNum = 1:numTones
