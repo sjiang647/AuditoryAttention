@@ -121,7 +121,7 @@ for trial = 1:numTrials
     
     % Display instructions
     if trialSettings(1)
-        Screen('DrawText', window, 'Focus on the 6 tones.', center(1) - 150, center(2));
+        Screen('DrawText', window, 'Focus on the tones.', center(1) - 150, center(2));
         Screen('Flip', window);
     else
         Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
