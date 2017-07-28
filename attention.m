@@ -177,9 +177,9 @@ for trial = 1:numTrials
         
         % Ask for number of times words played
         while true
-            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             if length(ans) > 1 && any([0:numTones] == 1) 
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             else 
                 break;
             end 
@@ -274,9 +274,9 @@ for trial = 1:numTrials
         else
             % Ask for number of times words played
             while true
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) ' ): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) ' ): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 if length(ans) > 1 && any([0:numTones] == 1) 
-                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 else
                     break;
                 end
@@ -332,3 +332,10 @@ function playAudio(m)
     PsychPortAudio('FillBuffer', handle, newm);
     PsychPortAudio('Start', handle, 1, 0, 1);
 end
+
+
+l
+
+l
+
+l
