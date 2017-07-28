@@ -87,7 +87,7 @@ for trial = 1:numTrials
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
 
-        showSingleInstructions(window, numTones, rect, 'Audio tones');
+        showSingleInstructions(window, numTones, rect, 'audio tones');
         
         for toneNum = 1:numTones
             playAudio(tones(toneNum) + meanTone);
@@ -131,7 +131,7 @@ for trial = 1:numTrials
         numSounds = 3;
         setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
         
-        showSingleInstructions(window, numTones, rect, 'Words');
+        showSingleInstructions(window, numTones, rect, 'words');
         
         for toneNum = 1:numTones
             playAudio(audios{setSounds(toneNum)});
@@ -150,15 +150,8 @@ for trial = 1:numTrials
         end  
     else
 
-        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/12, center(2));
-        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
-        Screen('Flip', window);
-        KbWait();
-        Screen('DrawText', window, [ num2str(numTones) '  Words will be played.'], center(1) - windowX/12, center(2));
-        Screen('Flip', window);
+        showSingleInstructions(window, rect, numTones, 'sets of words and tones');
         
-        % 1. what to ask 2. high/low %
-        Screen
         % Randomly shuffle tones to be played
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
@@ -169,21 +162,10 @@ for trial = 1:numTrials
         
         % Display instructions
         if trialSettings(1)
-            Screen('DrawText', window, 'Focus on the tones.', center(1) - windowX/12, center(2));
-            Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
-            Screen('Flip', window);
-            KbWait;
-            Screen('DrawText', window, 'Focus on the tones.', center(1) - windowX/12, center(2));
-            Screen('Flip', window); 
+            showFocusInstructions(window, rect, 'Focus on the tones.');
         else
-            Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/12, center(2));
-            Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
-            Screen('Flip', window);
-            KbWait;
-            Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/12, center(2));
-            Screen('Flip', window); 
+            showFocusInstructions(window, rect, 'Focus on the words.');
         end
-        
         
         % Loop through and play all tones
         for toneNum = 1:numTones
@@ -273,15 +255,20 @@ cd ..
 %% Functions
 
 function showSingleInstructions(window, numTones, rect, type)
+    msg = [num2str(numTones) ' ' type ' will be played.'];
+    showFocusInstructions(window, numTones, rect, msg);
+end
+
+function showFocusInstructions(window, rect, msg)
     windowX = rect(3);
     windowY = rect(4);
     center = [windowX/2, windowY/2];
     
-    Screen('DrawText', window, [ num2str(numTones) ' ' type ' will be played.'], center(1) - windowX/11, center(2)); 
+    Screen('DrawText', window, msg, center(1) - windowX/11, center(2)); 
     Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
     Screen('Flip', window);
     KbWait();
-    Screen('DrawText', window, [ num2str(numTones) ' ' type ' will be played.'], center(1) - windowX/11, center(2));
+    Screen('DrawText', window, msg, center(1) - windowX/11, center(2));
     Screen('Flip', window);
 end
 
