@@ -16,12 +16,14 @@ windowX = rect(3);
 windowY = rect(4);
 center = [windowX/2, windowY/2];
 
+%% Load auditory noise stimuli
+
 cd('AudioStimuli');
 names = dir('*.wav');
 audios = cell(1, length(names));
 for i = 1:length(names)
     audios{i} = audioread(names(i).name);
-    audios{i} = audios{i} * .75;
+    audios{i} = audios{i} * .5;
 end
 cd('..');
 
@@ -38,35 +40,11 @@ meanRange = 48:72;
 toneRange = [1 3 5];
 testRange = [2 4 6];
 
-% Auditory frequency generation
-
-fs = 44100;
-toneDuration = 0.300;
-toneLength = 0:1/fs:toneDuration;
-freqRamp = 1/(2*.01);
-rampVector = 1:441;
-
 % Data saving
 data = zeros(1, numTrials);
 % 1. first name, 2. last name, 3. gender, 4. age [1x1]
 % 5. mean tone, 6. noise type, 7. outlier tone, 8. outlier position [1xnumTrials]
 subjectData = cell(1, 6);
-
-%% Load/trim auditory noise stimuli
-
-%% Generate auditory tone stimuli
-
-offset = (1 + sin(2 * pi * freqRamp * rampVector ./ fs + (pi/2))) / 2;
-onset = (1 + sin(2 * pi * freqRamp * rampVector ./ fs + (-pi/2))) / 2;
-frequencies = cell(1, 127);
-
-for k = 1:127
-    toneFrequency = 440 * 2 ^ ((k - 69)/12);
-    midiTones = sin(2 * pi * toneFrequency * toneLength);
-    midiTones(1:441) = onset .* midiTones(1:441);
-    midiTones((end - 440):end) = offset .* midiTones((end - 440):end);
-    frequencies{k} = repmat(midiTones, 2, 1);
-end
 
 %% Counterbalance conditions
 
@@ -117,7 +95,7 @@ for trial = 1:numTrials
         KbWait();
         for toneNum = 1:numTones
             playAudio(tones(toneNum) + meanTone);
-            WaitSecs(.3);
+            WaitSecs(0.45);
         end
         
         Screen('DrawText', window, 'You will now hear a test tone.', center(1) - 250, center(2) - 25);
@@ -164,8 +142,8 @@ for trial = 1:numTrials
         
         % Ask for number of times words played
         while true
-            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-            if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')||(ans=='7')||(ans=='8')||(ans=='9')
+            res = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            if res=='1' || res=='2' || res=='3' || res=='4' || res=='5' || res=='6' || res=='7' || res=='8' || res=='9'
                 break;
             end
         end
@@ -186,9 +164,9 @@ for trial = 1:numTrials
         % Loop through and play all tones
         for toneNum = 1:numTones
             playAudio(audios{setSounds(toneNum)});
-            WaitSecs(tonePause);
+            WaitSecs(0.15);
             playAudio(tones(toneNum) + meanTone);
-            WaitSecs(tonePause);
+            WaitSecs(0.45);
         end
         
         if trialSettings(3)
@@ -226,8 +204,8 @@ for trial = 1:numTrials
         else
             % Ask for number of times words played
             while true
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-                if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')
+                res = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                if res=='1' || res=='2' || res=='3' || res=='4' || res=='5' || res=='6' 
                     break;
                 end
             end
@@ -242,8 +220,6 @@ PsychPortAudio('Close', handle);
 ShowCursor();
 Screen('CloseAll');
 
-%% Data analysis
-
 %% Save data
 
 if ~isdir(['participant_data/', subjectData{1}])
@@ -256,7 +232,7 @@ function playAudio(m)
     handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
     
     fs = 44100;
-    toneLength = 0:1/fs:.300;
+    toneLength = 0:1/fs:.450;
     freqRamp = 1/(2*.01);
     rampVector = 1:441;
     
