@@ -44,7 +44,6 @@ toneRange = [1 3 5];
 testRange = [2 4 6];
 
 % Auditory frequency generation
-
 fs = 44100;
 toneDuration = 0.300;
 toneLength = 0:1/fs:toneDuration;
@@ -95,9 +94,9 @@ subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, Rec
 
 %% Task instructions
 
-Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-420, center(2)-60);
-Screen('DrawText', window, 'At the end of each trial, you will be asked to make an input based on a question asked.', center(1)-450, center(2)-30);
-Screen('DrawText', window, 'Press "Return" to continue', center(1)-150, center(2));
+Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-windowX/2.9, center(2));
+Screen('DrawText', window, 'At the end of each trial, you will be asked to make an input based on a question asked.', center(1)-windowX/2.8, center(2)+windowX/35);
+Screen('DrawText', window, 'Press enter to continue', center(1)-windowX/12, center(2) + windowX/13);
 Screen('Flip', window);
 KbWait([], 2);
 
@@ -106,9 +105,9 @@ KbWait([], 2);
 handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
 
 for trial = 1:numTrials
-            meanDiff = 2;
-Screen('Flip', window);
-        trialSettings = counterbalancing(:, trial);
+    meanDiff = 2;
+    Screen('Flip', window);
+    trialSettings = counterbalancing(:, trial);
 
     if trial < 4
         meanTone = randsample(meanRange, 1);
@@ -117,6 +116,18 @@ Screen('Flip', window);
         Screen('DrawText', window, '6 Audio tones will be played. Press "Return" to continue', center(1) - 150, center(2));
         Screen('Flip', window);
         KbWait();
+        
+        %Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/10, center(2));
+        %Screen('DrawText', window, 'Press enter to continue.', center(1)- windowX/12, center(2) + windowY/13);
+        %Screen('Flip', window); 
+        
+%         Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/14, center(2));
+%         Screen('DrawText', window, 'Press enter to continue.', center(1) - windowX/12, center(2) + windowY/13);
+%         Screen('Flip', window);
+%         KbWait;
+%         Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/14, center(2));
+%         Screen('Flip', window);
+        
         for toneNum = 1:numTones
             playAudio(tones(toneNum) + meanTone);
             WaitSecs(.3);
@@ -130,8 +141,8 @@ Screen('Flip', window);
         playAudio(meanTone + trialSettings(2));
         
         % Keyboard instructions
-        Screen('DrawText', window, 'Press "h" if the test tone was higher than the mean sounds of the 6 tones.', center(1) - 250, center(2) - 25);
-        Screen('DrawText', window, 'Press "l" if the test tone was lower than the mean sounds of the 6 tones.', center(1) - 250, center(2));
+        Screen('DrawText', window, 'Press H if the test tone was higher than the mean.', center(1) - windowX/5, center(2) - windowY/13);
+        Screen('DrawText', window, 'Press L if the test tone was lower than the mean.', center(1) - windowX/5.1, center(2));
         Screen('Flip', window);
         
         % Check keyboard presses
