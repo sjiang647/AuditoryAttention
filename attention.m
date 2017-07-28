@@ -113,7 +113,6 @@ for trial = 1:numTrials
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
 
-
         Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/11, center(2)); 
         Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
         Screen('Flip', window);
