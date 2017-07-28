@@ -271,6 +271,7 @@ for trial = 1:numTrials
             % Check accuracy of response
             if (response == 'h' && trialSettings(2)) || (response == 'l' && ~trialSettings(2))
                 data(trial) = 1;
+                subjectData{6}(1,numTrials) = data;
             end
         else
             % Ask for number of times words played
