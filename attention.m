@@ -40,18 +40,11 @@ meanRange = 48:72;
 toneRange = [1 3 5];
 testRange = [2 4 6];
 
-% Auditory frequency generation
-fs = 44100;
-toneDuration = 0.300;
-toneLength = 0:1/fs:toneDuration;
-freqRamp = 1/(2*.01);
-rampVector = 1:441;
-
 % Data saving
 data = zeros(1, numTrials);
 % 1. first name, 2. last name, 3. gender, 4. age [1x1]
 % 5. mean tone, 6. noise type, 7. outlier tone, 8. outlier position [1xnumTrials]
-subjectData = cell(1, 6);
+subjectData = cell(1, 9);
 
 %% Counterbalance conditions
 
@@ -68,11 +61,11 @@ subjectData{5} = counterbalancing;
 
 %% Subject data input
 
-% subjectData{1} = Ask(window, 'First Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
-% subjectData{2} = Ask(window, 'Last Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
-% subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTop, 25);
-% subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
-subjectData{8} = zeros(numTrials, 4);
+subjectData{1} = Ask(window, 'First Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
+subjectData{2} = Ask(window, 'Last Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
+subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTop, 25);
+subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
+subjectData{8} = zeros(numTrials, numTones);
 
 %% Task instructions
 
@@ -94,12 +87,7 @@ for trial = 1:numTrials
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
 
-        Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/11, center(2)); 
-        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
-        Screen('Flip', window);
-        KbWait();
-        Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/11, center(2));
-        Screen('Flip', window);
+        showSingleInstructions(window, numTones, rect, 'Audio tones');
         
         for toneNum = 1:numTones
             playAudio(tones(toneNum) + meanTone);
@@ -143,13 +131,7 @@ for trial = 1:numTrials
         numSounds = 3;
         setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
         
-
-        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/12, center(2));
-        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
-        Screen('Flip', window);
-        KbWait();
-        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/12, center(2));
-        Screen('Flip', window);
+        showSingleInstructions(window, numTones, rect, 'Words');
         
         for toneNum = 1:numTones
             playAudio(audios{setSounds(toneNum)});
@@ -279,8 +261,6 @@ PsychPortAudio('Close', handle);
 ShowCursor();
 Screen('CloseAll');
 
-%% Data analysis
-
 %% Save data
 
 if ~isdir(['participant_data/', subjectData{1}])
@@ -291,6 +271,19 @@ save('data', 'subjectData');
 cd ..
 
 %% Functions
+
+function showSingleInstructions(window, numTones, rect, type)
+    windowX = rect(3);
+    windowY = rect(4);
+    center = [windowX/2, windowY/2];
+    
+    Screen('DrawText', window, [ num2str(numTones) ' ' type ' will be played.'], center(1) - windowX/11, center(2)); 
+    Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
+    Screen('Flip', window);
+    KbWait();
+    Screen('DrawText', window, [ num2str(numTones) ' ' type ' will be played.'], center(1) - windowX/11, center(2));
+    Screen('Flip', window);
+end
 
 function playAudio(m)
     handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
