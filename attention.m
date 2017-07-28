@@ -240,8 +240,7 @@ for trial = 1:numTrials
             
             % Play audio tone
             
-            offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
-            playAudio(offtone);
+            playAudio(meanTone + trialSettings(2));
             
             %         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
             %         PsychPortAudio('Start', handle, 1, 0, 1);
