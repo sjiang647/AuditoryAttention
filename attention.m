@@ -9,8 +9,8 @@ clc;
 
 Screen('Preference', 'SkipSyncTests', 1);
 RandStream.setGlobalStream(RandStream('mt19937ar','seed',sum(100*clock)));
-[window, rect] = Screen('OpenWindow', 0); 
-Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+[window, rect] = Screen('OpenWindow', 0);
+Screen('BlendFunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 HideCursor();
 
 windowX = rect(3);
@@ -66,10 +66,10 @@ offset = (1 + sin(2 * pi * freqRamp * rampVector ./ fs + (pi/2))) / 2;
 onset = (1 + sin(2 * pi * freqRamp * rampVector ./ fs + (-pi/2))) / 2;
 frequencies = cell(1, 127);
 
-for k = 1:127 
+for k = 1:127
     toneFrequency = 440 * 2 ^ ((k - 69)/12);
     midiTones = sin(2 * pi * toneFrequency * toneLength);
-    midiTones(1:441) = onset .* midiTones(1:441); 
+    midiTones(1:441) = onset .* midiTones(1:441);
     midiTones((end - 440):end) = offset .* midiTones((end - 440):end);
     frequencies{k} = repmat(midiTones, 2, 1);
 end
@@ -100,28 +100,28 @@ subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, Rec
 Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-420, center(2)-60);
 Screen('DrawText', window, 'At the end of each trial, you will be asked to make an input based on a question asked.', center(1)-450, center(2)-30);
 Screen('DrawText', window, 'Press any button to continue', center(1)-150, center(2));
-Screen('Flip', window); 
+Screen('Flip', window);
 KbWait([], 2);
 
 %% Stimuli display (experiment)
 
-handle = PsychPortAudio('Open', [], [], 0, 44100, 2); 
+handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
 
 for trial = 1:numTrials
     Screen('Flip', window);
     
     meanDiff = 2;
     
-    % 1. what to ask 2. high/low % 
+    % 1. what to ask 2. high/low %
     trialSettings = counterbalancing(:, trial);
     
     % Randomly shuffle tones to be played
     meanTone = randsample(meanRange, 1);
-    tones = randsample([-toneRange toneRange], numTones); 
+    tones = randsample([-toneRange toneRange], numTones);
     
-    %creating set of sounds 
+    %creating set of sounds
     numSounds = 3;
-    setSounds = randsample(numSounds, 6, true); %creating a random set of sounds 
+    setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
     
     % Display instructions
     if trialSettings(1)
@@ -135,7 +135,7 @@ for trial = 1:numTrials
     for toneNum = 1:numTones
         playAudio(audios{setSounds(toneNum)});
         WaitSecs(.3);
-        playAudio(tones(toneNum) + meanTone);  
+        playAudio(tones(toneNum) + meanTone);
         WaitSecs(.3);
     end
     
@@ -143,18 +143,19 @@ for trial = 1:numTrials
         % Audio task instructions
         Screen('DrawText', window, 'You will now hear a test tone.', center(1) - 250, center(2) - 25);
         Screen('DrawText', window, 'Press any key to continue.', center(1)- 250, center(2));
-        KbWait();
         Screen('Flip', window);
+        
+        KbWait();
         
         % Play audio tone
         
         offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
         playAudio(offtone);
         
-%         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
-%         PsychPortAudio('Start', handle, 1, 0, 1);
-%         WaitSecs(tonePause);
-%         PsychPortAudio('Stop', handle);
+        %         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
+        %         PsychPortAudio('Start', handle, 1, 0, 1);
+        %         WaitSecs(tonePause);
+        %         PsychPortAudio('Stop', handle);
         
         % Keyboard instructions
         Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center(1) - 250, center(2) - 25);
@@ -164,9 +165,9 @@ for trial = 1:numTrials
         % Check keyboard presses
         KbName('UnifyKeyNames');
         while true
-            [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1); 
+            [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1);
             key = KbName(find(keyCode));
-
+            
             if strcmp(key, 'h')
                 response = 'h';
                 break;
@@ -186,10 +187,10 @@ for trial = 1:numTrials
             ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-9): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')||(ans=='7')||(ans=='8')||(ans=='9')
                 break;
-            end 
+            end
         end
     end
-
+    
     WaitSecs(trialPause);
 end
 
@@ -210,7 +211,7 @@ end
 %% Functions
 
 function playAudio(m)
-handle = PsychPortAudio('Open', [], [], 0, 44100, 2); 
+handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
 
 toneLength = 0:1/44100:.300;
 freqRamp = 1/(2*(.01));
@@ -218,21 +219,21 @@ rampVector = [1:441];
 fs = 44100;
 offset = (1+sin(2*pi*freqRamp*rampVector./fs + (pi/2)))/2;
 onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
-    if ~isscalar(m)
-        if size(m, 2) < size(m, 1)
-            m = m';
-        end
-        newm = repmat(m,2,1);
-        PsychPortAudio('FillBuffer', handle, newm);
-        PsychPortAudio('Start', handle, 1, 0, 1);
-    else
-        toneFrequency = 440*2^((m-69)/12);
-        midiTone = sin(2*pi* toneFrequency * toneLength);%creating the tones in terms of frequency
-        midiTone(1:441) = onset .* midiTone(1:441);
-        midiTone(end - 440: end) = offset .* midiTone(end - 440: end);
-        newm = repmat(midiTone, 2, 1); %duplicates the sound in order to hear through headphones
-        PsychPortAudio('FillBuffer', handle, newm);
-        PsychPortAudio('Start', handle, 1, 0, 1);
+if ~isscalar(m)
+    if size(m, 2) < size(m, 1)
+        m = m';
     end
+    newm = repmat(m,2,1);
+    PsychPortAudio('FillBuffer', handle, newm);
+    PsychPortAudio('Start', handle, 1, 0, 1);
+else
+    toneFrequency = 440*2^((m-69)/12);
+    midiTone = sin(2*pi* toneFrequency * toneLength);%creating the tones in terms of frequency
+    midiTone(1:441) = onset .* midiTone(1:441);
+    midiTone(end - 440: end) = offset .* midiTone(end - 440: end);
+    newm = repmat(midiTone, 2, 1); %duplicates the sound in order to hear through headphones
+    PsychPortAudio('FillBuffer', handle, newm);
+    PsychPortAudio('Start', handle, 1, 0, 1);
+end
 
 end
