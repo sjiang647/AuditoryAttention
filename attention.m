@@ -178,7 +178,7 @@ for trial = 1:numTrials
         % Ask for number of times words played
         while true
             ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-            if length(ans) > 1 && num2str(any([0:numTones])) == ans
+            if length(ans) > 1 && any([0:numTones] == 1) 
                 ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             else 
                 break;
@@ -275,7 +275,7 @@ for trial = 1:numTrials
             % Ask for number of times words played
             while true
                 ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) ' ): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-                if length(ans) > 1 && num2str(any([0:numTones])) == ans
+                if length(ans) > 1 && any([0:numTones] == 1) 
                     ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 else
                     break;
@@ -299,7 +299,7 @@ Screen('CloseAll');
 if ~isdir(['participant_data/', subjectData{1}])
     mkdir(['participant_data/', subjectData{1}]);
 end
-cd(['./Participant_Data/', subjectData{1}]);
+cd(['participant_Data/', subjectData{1}]);
 save('subjectData');
 cd ..
 
