@@ -95,7 +95,7 @@ for trial = 1:numTrials
             WaitSecs(.3);
         end
         
-        audioTaskInstructions(meanTone + trialSettings(2));
+        audioTaskInstructions(window, rect, meanTone + trialSettings(2));
         data(trial) = analyzeHighLow(trialSettings(2));
     elseif trial < 7
         %% Words only
@@ -111,12 +111,10 @@ for trial = 1:numTrials
         
         % Ask for number of times words played
         nameToAsk = names(randsample(3,1)).name;
-        while true
-            res = wordTaskInstructions(window, nameToAsk, numTones);
-        end  
+        res = wordTaskInstructions(window, nameToAsk, numTones);  
     else
         %% Main Experiment
-        showSingleInstructions(window, rect, numTones, 'sets of words and tones');
+        showSingleInstructions(window, numTones, rect, 'sets of words and tones');
         
         % Randomly shuffle tones to be played
         meanTone = randsample(meanRange, 1);
@@ -142,7 +140,7 @@ for trial = 1:numTrials
         end
         
         if trialSettings(3)
-            audioTaskInstructions(meanTone + trialSettings(2));
+            audioTaskInstructions(window, rect, meanTone + trialSettings(2));
             subjectData{6}(trial) = analyzeHighLow(trialSettings(2));
         else
             % Ask for number of times words played
@@ -170,15 +168,17 @@ Screen('CloseAll');
 if ~isdir(['participant_data/', subjectData{1}])
     mkdir(['participant_data/', subjectData{1}]);
 end
+
 cd(['participant_data/', subjectData{1}]);
 save('data', 'subjectData');
-cd ..
+cd('..');
+cd('..');
 
 %% Info Instructions
 
 function showSingleInstructions(window, numTones, rect, type)
     msg = [num2str(numTones) ' ' type ' will be played.'];
-    showFocusInstructions(window, numTones, rect, msg);
+    showFocusInstructions(window, rect, msg);
 end
 
 function showFocusInstructions(window, rect, msg)
@@ -196,7 +196,11 @@ end
 
 %% Task Instructions
 
-function audioTaskInstructions(toneToPlay)
+function audioTaskInstructions(window, rect, toneToPlay)
+    windowX = rect(3);
+    windowY = rect(4);
+    center = [windowX/2, windowY/2];
+    
     % Audio task instructions
     Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/12, center(2));
     Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2) + windowY/13);
