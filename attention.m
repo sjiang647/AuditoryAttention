@@ -84,6 +84,7 @@ for trial = 1:numTrials
     trialSettings = counterbalancing(:, trial);
 
     if trial < 4
+        %% Audio only
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
 
@@ -94,40 +95,10 @@ for trial = 1:numTrials
             WaitSecs(.3);
         end
         
-        Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/10, center(2));
-        Screen('DrawText', window, 'Press ENTER to continue.', center(1)- windowX/11, center(2)+windowY/13);
-        Screen('Flip', window);
-        KbWait();
-
-        playAudio(meanTone + trialSettings(2));
-        
-        % Keyboard instructions
-        Screen('DrawText', window, 'Press H if the test tone was higher than the mean.', center(1) - windowX/5, center(2) - windowY/13);
-        Screen('DrawText', window, 'Press L if the test tone was lower than the mean.', center(1) - windowX/5.1, center(2));
-        Screen('Flip', window);
-        
-        % Check keyboard presses
-        KbName('UnifyKeyNames');
-        while true
-            [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1);
-            key = KbName(find(keyCode));
-            
-            if strcmp(key, 'h')
-                response = 'h';
-                break;
-            end
-            if strcmp(key, 'l')
-                response = 'l';
-                break;
-            end
-        end
-        % Check accuracy of response
-        if (response == 'h' && trialSettings(2)) || (response == 'l' && ~trialSettings(2))
-            data(trial) = 1;
-        end
-        
+        audioTaskInstructions(meanTone + trialSettings(2));
+        data(trial) = analyzeHighLow(trialSettings(2));
     elseif trial < 7
-        
+        %% Words only
         numSounds = 3;
         setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
         
@@ -141,15 +112,10 @@ for trial = 1:numTrials
         % Ask for number of times words played
         nameToAsk = names(randsample(3,1)).name;
         while true
-            res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-            if ismember(str2double(res), 0:numTones)
-                break;
-            else 
-                res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-            end 
+            res = wordTaskInstructions(window, nameToAsk, numTones);
         end  
     else
-
+        %% Main Experiment
         showSingleInstructions(window, rect, numTones, 'sets of words and tones');
         
         % Randomly shuffle tones to be played
@@ -176,59 +142,15 @@ for trial = 1:numTrials
         end
         
         if trialSettings(3)
-            % Audio task instructions
-            Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/12, center(2));
-            Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2) + windowY/13);
-            Screen('Flip', window);
-            KbWait();
-            
-            % Play audio tone
-            
-            playAudio(meanTone + trialSettings(2));
-            
-            %         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
-            %         PsychPortAudio('Start', handle, 1, 0, 1);
-            %         WaitSecs(tonePause);
-            %         PsychPortAudio('Stop', handle);
-            
-            % Keyboard instructions
-
-            Screen('DrawText', window, 'Press H if the test tone was higher than the mean.', center(1) - windowX/5, center(2) - windowY/13);
-            Screen('DrawText', window, 'Press L if the test tone was lower than the mean.', center(1) - windowX/5.1, center(2));
-            Screen('Flip', window);
-            
-            % Check keyboard presses
-            KbName('UnifyKeyNames');
-            while true
-                [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1);
-                key = KbName(find(keyCode));
-                
-                if strcmp(key, 'h')
-                    response = 'h';
-                    break;
-                end
-                if strcmp(key, 'l')
-                    response = 'l';
-                    break;
-                end
-            end
-            % Check accuracy of response
-            if (response == 'h' && trialSettings(2)) || (response == 'l' && ~trialSettings(2))
-                data(trial) = 1;
-                subjectData{6}(numTrials) = data(trial);
-            end
+            audioTaskInstructions(meanTone + trialSettings(2));
+            subjectData{6}(trial) = analyzeHighLow(trialSettings(2));
         else
             % Ask for number of times words played
             nameIndex = randsample(3,1);
             nameToAsk = names(nameIndex).name;
-            while true
-                res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-                if ismember(str2double(res), 0:numTones)
-                    break;
-                else 
-                    res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-                end 
-            end
+            res = wordTaskInstructions(window, nameToAsk, numTones);
+            
+            % Store data
             subjectData{7}(trial) = nameIndex;
             subjectData{8}(trial,:) = setSounds;
             subjectData{9}(trial) = res;
@@ -252,7 +174,7 @@ cd(['participant_data/', subjectData{1}]);
 save('data', 'subjectData');
 cd ..
 
-%% Functions
+%% Info Instructions
 
 function showSingleInstructions(window, numTones, rect, type)
     msg = [num2str(numTones) ' ' type ' will be played.'];
@@ -271,6 +193,62 @@ function showFocusInstructions(window, rect, msg)
     Screen('DrawText', window, msg, center(1) - windowX/11, center(2));
     Screen('Flip', window);
 end
+
+%% Task Instructions
+
+function audioTaskInstructions(toneToPlay)
+    % Audio task instructions
+    Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/12, center(2));
+    Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2) + windowY/13);
+    Screen('Flip', window);
+    KbWait();
+    playAudio(toneToPlay);
+
+    % Keyboard instructions
+    Screen('DrawText', window, 'Press H if the test tone was higher than the mean.', center(1) - windowX/5, center(2) - windowY/13);
+    Screen('DrawText', window, 'Press L if the test tone was lower than the mean.', center(1) - windowX/5.1, center(2));
+    Screen('Flip', window);
+end
+
+function response = wordTaskInstructions(window, nameToAsk, numTones)
+    while true
+        res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+        if ismember(str2double(res), 0:numTones)
+            break;
+        else 
+            res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+        end 
+    end
+    response = res;
+end
+
+%% Response Analysis
+
+function correct = analyzeHighLow(position)
+    % Check keyboard presses
+    KbName('UnifyKeyNames');
+    while true
+        [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1);
+        key = KbName(find(keyCode));
+
+        if strcmp(key, 'h')
+            response = 'h';
+            break;
+        end
+        if strcmp(key, 'l')
+            response = 'l';
+            break;
+        end
+    end
+    % Check accuracy of response
+    if (response == 'h' && position > 0) || (response == 'l' && position < 0)
+        correct = 1;
+    else
+        correct = 0;
+    end
+end
+
+%% Audio playback
 
 function playAudio(m)
     handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
