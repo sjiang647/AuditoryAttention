@@ -16,20 +16,15 @@ windowX = rect(3);
 windowY = rect(4);
 center = [windowX/2, windowY/2];
 
-cd AudioStimuli
+cd('AudioStimuli');
 names = dir('*.wav');
-audios = cell(length(names));
+audios = cell(1, length(names));
 for i = 1:length(names)
     audios{i} = audioread(names(i).name);
     audios{i} = audios{i} * .75;
 end
-cd ..;
-% toneLength = 0:1/44100:.300;
-% freqRamp = 1/(2*(.01));
-% rampVector = [1:441];
-% fs = 44100;
-% offset = (1+sin(2*pi*freqRamp*rampVector./fs + (pi/2)))/2;
-% onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
+cd('..');
+
 %% Constants and global variables
 
 % Experiment
@@ -106,13 +101,16 @@ KbWait([], 2);
 handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
 
 for trial = 1:numTrials
-            meanDiff = 2;
-Screen('Flip', window);
-        trialSettings = counterbalancing(:, trial);
+    Screen('Flip', window);
+    % 1. what to ask 2. test tone distance % 3. what to focus on
+    trialSettings = counterbalancing(:, trial);
+    
+    meanTone = randsample(meanRange, 1); % Randomly shuffle tones to be played
+    tones = randsample([-toneRange toneRange], numTones);
+    setSounds = randsample(length(audios), numTones, true); % Creating set of sounds
 
     if trial < 4
-        meanTone = randsample(meanRange, 1);
-        tones = randsample([-toneRange toneRange], numTones);
+        %% Only tones
 
         Screen('DrawText', window, 'Focus on the tones.', center(1) - 150, center(2));
         Screen('Flip', window);
@@ -154,9 +152,7 @@ Screen('Flip', window);
             data(trial) = 1;
         end
     elseif trial < 7
-        
-        numSounds = 3;
-        setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
+        %% Only words
         
         Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
         Screen('Flip', window);
@@ -173,20 +169,8 @@ Screen('Flip', window);
                 break;
             end
         end
-        
-        
-    else
-        
-        
-        % 1. what to ask 2. high/low %
-        
-        % Randomly shuffle tones to be played
-        meanTone = randsample(meanRange, 1);
-        tones = randsample([-toneRange toneRange], numTones);
-        
-        %creating set of sounds
-        numSounds = 3;
-        setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
+    else 
+        %% Main experiment
         
         % Display instructions
         if trialSettings(1)
@@ -197,16 +181,14 @@ Screen('Flip', window);
             Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
             Screen('Flip', window);
             KbWait();
-            
         end
-        
         
         % Loop through and play all tones
         for toneNum = 1:numTones
             playAudio(audios{setSounds(toneNum)});
-            WaitSecs(.3);
+            WaitSecs(tonePause);
             playAudio(tones(toneNum) + meanTone);
-            WaitSecs(.3);
+            WaitSecs(tonePause);
         end
         
         if trialSettings(3)
@@ -215,16 +197,7 @@ Screen('Flip', window);
             Screen('DrawText', window, 'Press "Return" to continue.', center(1)- 250, center(2));
             Screen('Flip', window);
             KbWait();
-            
-            % Play audio tone
-            
-            offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
-            playAudio(offtone);
-            
-            %         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
-            %         PsychPortAudio('Start', handle, 1, 0, 1);
-            %         WaitSecs(tonePause);
-            %         PsychPortAudio('Stop', handle);
+            playAudio(meanTone + trialSettings(2));
             
             % Keyboard instructions
             Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center(1) - 250, center(2) - 25);
