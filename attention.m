@@ -16,20 +16,17 @@ windowX = rect(3);
 windowY = rect(4);
 center = [windowX/2, windowY/2];
 
-cd AudioStimuli
+%% Load auditory noise stimuli
+
+cd('AudioStimuli');
 names = dir('*.wav');
 audios = cell(length(names));
 for i = 1:length(names)
     audios{i} = audioread(names(i).name);
-    audios{i} = audios{i} * .75;
+    audios{i} = audios{i} * .6;
 end
-cd ..;
-% toneLength = 0:1/44100:.300;
-% freqRamp = 1/(2*(.01));
-% rampVector = [1:441];
-% fs = 44100;
-% offset = (1+sin(2*pi*freqRamp*rampVector./fs + (pi/2)))/2;
-% onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
+cd('..');
+
 %% Constants and global variables
 
 % Experiment
@@ -55,22 +52,6 @@ data = zeros(1, numTrials);
 % 1. first name, 2. last name, 3. gender, 4. age [1x1]
 % 5. mean tone, 6. noise type, 7. outlier tone, 8. outlier position [1xnumTrials]
 subjectData = cell(1, 6);
-
-%% Load/trim auditory noise stimuli
-
-%% Generate auditory tone stimuli
-
-offset = (1 + sin(2 * pi * freqRamp * rampVector ./ fs + (pi/2))) / 2;
-onset = (1 + sin(2 * pi * freqRamp * rampVector ./ fs + (-pi/2))) / 2;
-frequencies = cell(1, 127);
-
-for k = 1:127
-    toneFrequency = 440 * 2 ^ ((k - 69)/12);
-    midiTones = sin(2 * pi * toneFrequency * toneLength);
-    midiTones(1:441) = onset .* midiTones(1:441);
-    midiTones((end - 440):end) = offset .* midiTones((end - 440):end);
-    frequencies{k} = repmat(midiTones, 2, 1);
-end
 
 %% Counterbalance conditions
 
