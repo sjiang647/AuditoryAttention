@@ -114,7 +114,7 @@ Screen('Flip', window);
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
 
-        Screen('DrawText', window, 'Focus on the tones.', center(1) - 150, center(2));
+        Screen('DrawText', window, '6 Audio tones will be played. Press "Return" to continue', center(1) - 150, center(2));
         Screen('Flip', window);
         KbWait();
         for toneNum = 1:numTones
@@ -130,8 +130,8 @@ Screen('Flip', window);
         playAudio(meanTone + trialSettings(2));
         
         % Keyboard instructions
-        Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center(1) - 250, center(2) - 25);
-        Screen('DrawText', window, 'Press l if the test tone was lower than the mean.', center(1) - 250, center(2));
+        Screen('DrawText', window, 'Press "h" if the test tone was higher than the mean sounds of the 6 tones.', center(1) - 250, center(2) - 25);
+        Screen('DrawText', window, 'Press "l" if the test tone was lower than the mean sounds of the 6 tones.', center(1) - 250, center(2));
         Screen('Flip', window);
         
         % Check keyboard presses
@@ -158,7 +158,7 @@ Screen('Flip', window);
         numSounds = 3;
         setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
         
-        Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
+        Screen('DrawText', window, '6 Words will be played. Press "Return" to continue.', center(1) - 150, center(2));
         Screen('Flip', window);
         KbWait();
         for toneNum = 1:numTones
@@ -169,17 +169,19 @@ Screen('Flip', window);
         % Ask for number of times words played
         while true
             ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-            if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')||(ans=='7')||(ans=='8')||(ans=='9')
+            if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')
                 break;
             end
         end
         
         
     else
-        
+        Screen('DrawText', window, '6 words and 6 tones will be played. Press "Return" to continue.', center(1) - 150, center(2));
+            Screen('Flip', window);
+            KbWait();
         
         % 1. what to ask 2. high/low %
-        
+        Screen
         % Randomly shuffle tones to be played
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
@@ -192,11 +194,10 @@ Screen('Flip', window);
         if trialSettings(1)
             Screen('DrawText', window, 'Focus on the tones.', center(1) - 150, center(2));
             Screen('Flip', window);
-            KbWait();
+            
         else
             Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
             Screen('Flip', window);
-            KbWait();
             
         end
         
