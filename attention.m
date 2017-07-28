@@ -23,7 +23,7 @@ names = dir('*.wav');
 audios = cell(length(names));
 for i = 1:length(names)
     audios{i} = audioread(names(i).name);
-    audios{i} = audios{i} * .75;
+    audios{i} = audios{i} * .7;
 end
 cd('..');
 
@@ -31,6 +31,7 @@ cd('..');
 
 % Experiment
 numTrials = 11;
+numTests = 3;
 tonePause = 0.350;
 wordPause = 0.300;
 trialPause = 0.500;
@@ -51,12 +52,12 @@ subjectData = cell(1, 9);
 
 % Generate counterbalanced conditions
 
-sequence = randperm(numTrials);
-askWhat = mod(sequence, 2); % 1 if mean, 0 if word
-highLow = floor(mod(sequence, 4) ./ 2); % 1 if high, 0 if low
-focusWhat = floor(mod(sequence, 8) ./ 4); % 1 if mean, 0 if word
+sequence = randperm(numTrials - 2 * numTests);
+askWhat = [randi([0, 1], 1, 2 * numTests) mod(sequence, 2)]; % 1 if mean, 0 if word
+highLow = [randi([0, 1], 1, 2 * numTests) floor(mod(sequence, 4) ./ 2)]; % 1 if high, 0 if low
+focusWhat = [randi([0, 1], 1, 2 * numTests) floor(mod(sequence, 8) ./ 4)]; % 1 if mean, 0 if word
 
-testDist = testRange(floor(mod(sequence, 24) ./ 8) + 1); % 1, 2, or 3
+testDist = [testRange(randi([1, 3], 1, 2 * numTests)) testRange(floor(mod(sequence, 24) ./ 8) + 1)]; % 1, 2, or 3
 testDist = testDist .* round(2 * (highLow - 0.5));
 
 counterbalancing = [askWhat; testDist; focusWhat];
@@ -83,7 +84,7 @@ subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, Rec
 
 % Initialize response cells
 subjectData{6} = repmat(-1, 1, numTrials);
-subjectData{8} = repmat(-1, 1, numTrials);
+subjectData{9} = repmat(-1, 1, numTrials);
 
 %% Task instructions
 
@@ -100,7 +101,7 @@ handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
 for trial = 1:numTrials
     Screen('Flip', window);
     
-    if trial < 4
+    if trial <= numTests
         %% Audio only
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
@@ -114,7 +115,7 @@ for trial = 1:numTrials
         
         audioTaskInstructions(window, rect, meanTone + testDist(trial));
         data(trial) = analyzeHighLow(testDist(trial));
-    elseif trial < 7
+    elseif trial <= numTests * 2
         %% Words only
         showSingleInstructions(window, numTones, rect, 'words');
         
