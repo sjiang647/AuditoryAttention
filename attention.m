@@ -299,8 +299,8 @@ Screen('CloseAll');
 if ~isdir(['participant_data/', subjectData{1}])
     mkdir(['participant_data/', subjectData{1}]);
 end
-cd(['participant_Data/', subjectData{1}]);
-save('subjectData');
+cd(['participant_data/', subjectData{1}]);
+save('data', 'subjectData');
 cd ..
 
 %% Functions
@@ -331,4 +331,6 @@ function playAudio(m)
     
     PsychPortAudio('FillBuffer', handle, newm);
     PsychPortAudio('Start', handle, 1, 0, 1);
+
 end
+
