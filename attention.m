@@ -91,7 +91,9 @@ subjectData{5} = counterbalancing;
 % subjectData{2} = Ask(window, 'Last Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
 % subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTop, 25);
 % subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
-
+for i = 1:numTrials
+    subjectData{7}(i) = randsample(3, 1);
+end
 %% Task instructions
 
 Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-windowX/3.5, center(2));
