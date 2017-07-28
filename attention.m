@@ -91,9 +91,8 @@ subjectData{5} = counterbalancing;
 % subjectData{2} = Ask(window, 'Last Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
 % subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTop, 25);
 % subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
-for i = 1:numTrials
-    subjectData{7}(i) = randsample(3, 1);
-end
+subjectData{8} = zeros(numTrials, 4);
+
 %% Task instructions
 
 Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-windowX/3.5, center(2));
@@ -275,6 +274,7 @@ for trial = 1:numTrials
             end
         else
             % Ask for number of times words played
+            nameToAsk = names(randsample(3,1)).name;
             while true
                 res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 if ismember(str2double(res), 0:numTones)
@@ -283,6 +283,9 @@ for trial = 1:numTrials
                     res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 end 
             end
+            subjectData{7}(trial) = nameToAsk;
+            subjectData{8}(trial,:) = setSounds;
+            subjectData{9}(trial) = res;
         end
     end
     WaitSecs(trialPause);
