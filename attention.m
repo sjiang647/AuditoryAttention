@@ -174,10 +174,7 @@ Screen('Flip', window);
             else 
                 break;
             end 
-        end 
-
-        
-        
+        end  
     else
         Screen('DrawText', window, '6 words and 6 tones will be played. Press "Return" to continue.', center(1) - 150, center(2));
             Screen('Flip', window);
