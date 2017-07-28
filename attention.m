@@ -125,7 +125,10 @@ for trial = 1:numTrials
         end
         
         % Ask for number of times words played
-        res = wordTaskInstructions(window, names(nameIndices(trial)).name, numTones);
+        index = find(names(nameIndices(trial)).name == '.');
+            naem = names(nameIndices(trial)).name;
+            naem = naem(1:index -1);
+        res = wordTaskInstructions(window, naem, numTones);
         subjectData{9}(trial) = str2double(res);
     else
         %% Main Experiment
@@ -154,7 +157,10 @@ for trial = 1:numTrials
             audioTaskInstructions(window, rect, meanTone + testDist(trial));
             subjectData{6}(trial) = analyzeHighLow(testDist(trial));
         else % Ask for number of times words played
-            res = wordTaskInstructions(window, names(nameIndices(trial)).name, numTones);
+            index = find(names(nameIndices(trial)).name == '.');
+            naem = names(nameIndices(trial)).name;
+            naem = naem(1:index -1);
+            res = wordTaskInstructions(window, naem, numTones);
             subjectData{9}(trial) = str2double(res);
         end
     end
@@ -220,11 +226,11 @@ end
 
 function response = wordTaskInstructions(window, nameToAsk, numTones)
     while true
-        res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+        res = Ask(window, ['How  many times was the word "' nameToAsk '" played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
         if ismember(str2double(res), 0:numTones)
             break;
         else 
-            res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            res = Ask(window, ['How  many times was the word "' nameToAsk '" played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
         end 
     end
     response = res;
