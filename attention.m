@@ -274,7 +274,8 @@ for trial = 1:numTrials
             end
         else
             % Ask for number of times words played
-            nameToAsk = names(randsample(3,1)).name;
+            nameIndex = randsample(3,1);
+            nameToAsk = names(nameIndex).name;
             while true
                 res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 if ismember(str2double(res), 0:numTones)
@@ -283,7 +284,7 @@ for trial = 1:numTrials
                     res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 end 
             end
-            subjectData{7}(trial) = nameToAsk;
+            subjectData{7}(trial) = nameIndex;
             subjectData{8}(trial,:) = setSounds;
             subjectData{9}(trial) = res;
         end
