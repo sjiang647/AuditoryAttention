@@ -119,6 +119,14 @@ for trial = 1:numTrials
         Screen('Flip', window);
         KbWait();
         Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/10, center(2));
+
+        
+        
+        l
+        
+        h
+        
+        l
         Screen('Flip', window);
         
         for toneNum = 1:numTones
@@ -274,9 +282,9 @@ for trial = 1:numTrials
         else
             % Ask for number of times words played
             while true
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) ' ): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 if length(ans) > 1 && (ans == '0')||(ans == '1')||(ans == '2')||(ans == '3')||(ans == '4')||(ans == '5')||(ans == '6')
-                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 else
                     break;
                 end
@@ -299,6 +307,9 @@ Screen('CloseAll');
 if ~isdir(['participant_data/', subjectData{1}])
     mkdir(['participant_data/', subjectData{1}]);
 end
+cd(['./Participant_Data/', subjectData{1}]);
+save('subjectData');
+cd ..
 
 %% Functions
 
