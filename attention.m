@@ -202,7 +202,7 @@ for trial = 1:numTrials
         
         %creating set of sounds
         numSounds = 3;
-        setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
+        setSounds = randsample(numSounds, 4, true); %creating a random set of sounds
         
         % Display instructions
         if trialSettings(1)
