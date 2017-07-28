@@ -45,7 +45,6 @@ toneRange = [2 4 6];
 outlierRange = [6 8 10 12];
 
 % Auditory frequency generation
-
 fs = 44100;
 toneDuration = 0.300;
 toneLength = 0:1/fs:toneDuration;
@@ -93,9 +92,9 @@ subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, Rec
 
 %% Task instructions
 
-Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-420, center(2)-60);
-Screen('DrawText', window, 'At the end of each trial, you will be asked to make an input based on a question asked.', center(1)-450, center(2)-30);
-Screen('DrawText', window, 'Press "Return" to continue', center(1)-150, center(2));
+Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-windowX/2.9, center(2));
+Screen('DrawText', window, 'At the end of each trial, you will be asked to make an input based on a question asked.', center(1)-windowX/2.8, center(2)+windowX/35);
+Screen('DrawText', window, 'Press enter to continue', center(1)-windowX/12, center(2) + windowX/13);
 Screen('Flip', window);
 KbWait([], 2);
 
@@ -121,15 +120,19 @@ for trial = 1:numTrials
     
     % Display instructions
     if trialSettings(1)
-        Screen('DrawText', window, 'Focus to the 6 tones.', center(1) - 150, center(2));
-        Screen('DrawText', window, 'Press any key to continue.', center(1)- 250, center(2));
+        Screen('DrawText', window, 'Focus on the tones.', center(1) - windowX/14, center(2));
+        Screen('DrawText', window, 'Press enter to continue.', center(1) - windowX/12, center(2) + windowY/13);
         Screen('Flip', window);
         KbWait;
+        Screen('DrawText', window, 'Focus on the tones.', center(1) - windowX/14, center(2));
+        Screen('Flip', window);
     else
-        Screen('DrawText', window, 'Focus on the words.', center(1) - 150, center(2));
-        Screen('DrawText', window, 'Press any key to continue.', center(1)- 250, center(2));
+        Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/14, center(2));
+        Screen('DrawText', window, 'Press enter to continue.', center(1) - windowX/12, center(2) + windowY/13);
         Screen('Flip', window);
         KbWait;
+        Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/14, center(2));
+        Screen('Flip', window);
     end
     
     
@@ -143,8 +146,8 @@ for trial = 1:numTrials
     
     if trialSettings(3)
         % Audio task instructions
-        Screen('DrawText', window, 'You will now hear a test tone.', center(1) - 250, center(2) - 25);
-        Screen('DrawText', window, 'Press "Return" to continue.', center(1)- 250, center(2));
+        Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/10, center(2));
+        Screen('DrawText', window, 'Press enter to continue.', center(1)- windowX/12, center(2) + windowY/13);
         Screen('Flip', window); 
         KbWait();
 
@@ -159,10 +162,8 @@ for trial = 1:numTrials
         %         PsychPortAudio('Stop', handle);
         
         % Keyboard instructions
-        msgHigh = 'Press h if the test tone was higher than the mean.';
-        msgLow = 'Press l if the test tone was lower than the mean.'
-        Screen('DrawText', window, msgHigh, center(1) - length(msgHigh), center(2) - 25);
-        Screen('DrawText', window, msgLow, center(1) - length(msgLow), center(2));
+        Screen('DrawText', window, 'Press H if the test tone was higher than the mean.', center(1) - windowX/5, center(2) - windowY/13);
+        Screen('DrawText', window, 'Press L if the test tone was lower than the mean.', center(1) - windowX/5.1, center(2));
         Screen('Flip', window);
         
         % Check keyboard presses
@@ -187,7 +188,7 @@ for trial = 1:numTrials
     else
         % Ask for number of times words played
         while true
-            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            ans = Ask(window, ['How many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             if (ans=='1')||(ans=='2')||(ans=='3')||(ans=='4')||(ans=='5')||(ans=='6')||(ans=='7')||(ans=='8')||(ans=='9')
                 break;
             end
