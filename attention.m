@@ -113,28 +113,20 @@ for trial = 1:numTrials
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
 
-        Screen('DrawText', window, '6 Audio tones will be played. Press "Return" to continue', center(1) - 150, center(2));
+        Screen('DrawText', window, '6 Audio tones will be played.', center(1) - windowX/10, center(2)); 
+        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/12, center(2)+windowY/13);
         Screen('Flip', window);
         KbWait();
-        
-        %Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/10, center(2));
-        %Screen('DrawText', window, 'Press enter to continue.', center(1)- windowX/12, center(2) + windowY/13);
-        %Screen('Flip', window); 
-        
-%         Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/14, center(2));
-%         Screen('DrawText', window, 'Press enter to continue.', center(1) - windowX/12, center(2) + windowY/13);
-%         Screen('Flip', window);
-%         KbWait;
-%         Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/14, center(2));
-%         Screen('Flip', window);
+        Screen('DrawText', window, '6 Audio tones will be played.', center(1) - windowX/10, center(2));
+        Screen('Flip', window);
         
         for toneNum = 1:numTones
             playAudio(tones(toneNum) + meanTone);
             WaitSecs(.3);
         end
         
-        Screen('DrawText', window, 'You will now hear a test tone.', center(1) - 250, center(2) - 25);
-        Screen('DrawText', window, 'Press "Return" to continue.', center(1)- 250, center(2));
+        Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/10, center(2));
+        Screen('DrawText', window, 'Press ENTER to continue.', center(1)- windowX/12, center(2)+windowY/13);
         Screen('Flip', window);
         KbWait();
 
