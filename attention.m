@@ -91,7 +91,9 @@ subjectData{5} = counterbalancing;
 % subjectData{2} = Ask(window, 'Last Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
 % subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTop, 25);
 % subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
-
+for i = 1:numTrials
+    subjectData{7}(i) = randsample(3, 1);
+end
 %% Task instructions
 
 Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-windowX/3.5, center(2));
@@ -177,9 +179,9 @@ for trial = 1:numTrials
         
         % Ask for number of times words played
         while true
-            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            ans = Ask(window, ['How  many times was ' names(subjectData{7}(trial)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             if length(ans) > 1 && ~any([0:numTones] == ans) 
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                ans = Ask(window, ['How  many times was ' names(subjectData{7}(trial)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             else 
                 break;
             end 
@@ -274,9 +276,9 @@ for trial = 1:numTrials
         else
             % Ask for number of times words played
             while true
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) ' ): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                ans = Ask(window, ['How  many times was ' names(subjectData{7}(trial)).name ' played (0-' num2str(numTones) ' ): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 if length(ans) > 1 && ~any([0:numTones] == ans) 
-                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                    ans = Ask(window, ['How  many times was ' names(subjectData{7}(trial)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 else
                     break;
                 end
