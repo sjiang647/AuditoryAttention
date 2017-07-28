@@ -115,10 +115,14 @@ for trial = 1:numTrials
 
 
         Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/10, center(2)); 
+<<<<<<< HEAD
         Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/12, center(2)+windowY/13);
+=======
+        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
+>>>>>>> c61e6df3fb94b81c4e4830e1edb7481b35edbdfa
         Screen('Flip', window);
         KbWait();
-        Screen('DrawText', window, '6 Audio tones will be played.', center(1) - windowX/10, center(2));
+        Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/10, center(2));
         Screen('Flip', window);
         
         for toneNum = 1:numTones
@@ -157,16 +161,15 @@ for trial = 1:numTrials
         if (response == 'h' && trialSettings(2)) || (response == 'l' && ~trialSettings(2))
             data(trial) = 1;
         end
+        
     elseif trial < 7
         
         numSounds = 3;
         setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
         
-        Screen('DrawText', window, '6 Words will be played. Press "Return" to continue.', center(1)- windowX/9, center(2));
-
 
         Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/10, center(2));
-        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/12, center(2)+windowY/13);
+        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
         Screen('Flip', window);
         KbWait();
         Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/10, center(2));
@@ -189,10 +192,13 @@ for trial = 1:numTrials
     else
 
         Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/10, center(2));
-        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/12, center(2)+windowY/13);
+        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
         Screen('Flip', window);
         KbWait();
-        Screen('DrawText', window, [ num2str(numTones) ' Words will be played.'], center(1) - windowX/10, center(2));
+        Screen('DrawText', window, [ num2str(numTones) '  Words will be played.'], center(1) - windowX/10, center(2));
+
+
+
         Screen('Flip', window);
         
         % 1. what to ask 2. high/low %
