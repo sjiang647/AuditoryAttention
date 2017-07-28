@@ -94,13 +94,13 @@ subjectData{5} = counterbalancing;
 
 %% Task instructions
 
-Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-windowX/2.9, center(2));
-Screen('DrawText', window, 'At the end of each trial, you will be asked to make an input based on a question asked.', center(1)-windowX/2.8, center(2)+windowX/35);
-Screen('DrawText', window, 'Press ENTER to continue', center(1)-windowX/11, center(2) + windowX/13);
+Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-windowX/3.5, center(2));
+Screen('DrawText', window, 'At the end of each trial, you will be asked to make an input based on a question asked.', center(1)-windowX/3, center(2)+windowX/35);
+Screen('DrawText', window, 'Press enter to continue', center(1)-windowX/13.5, center(2) + windowX/13);
 Screen('Flip', window);
 KbWait([], 2);
 
-%% Stimuli display (experiment)
+% %% Stimuli display (experiment)
 
 handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
 
@@ -178,9 +178,9 @@ for trial = 1:numTrials
         
         % Ask for number of times words played
         while true
-            ans = Ask(window, ['How many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-            if length(ans) > 1
-                ans = Ask(window, ['How many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            if length(ans) > 1 length(ans)>1 && (ans =='0')||(ans =='1')||(ans =='2')||(ans =='3')||(ans =='4')||(ans =='5')||(ans =='6')
+                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             else 
                 break;
             end 
@@ -232,7 +232,7 @@ for trial = 1:numTrials
         
         if trialSettings(3)
             % Audio task instructions
-            Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/10.5, center(2));
+            Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/12, center(2));
             Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2) + windowY/13);
             Screen('Flip', window);
             KbWait();
@@ -248,6 +248,7 @@ for trial = 1:numTrials
             %         PsychPortAudio('Stop', handle);
             
             % Keyboard instructions
+
             Screen('DrawText', window, 'Press H if the test tone was higher than the mean.', center(1) - windowX/5, center(2) - windowY/13);
             Screen('DrawText', window, 'Press L if the test tone was lower than the mean.', center(1) - windowX/5.1, center(2));
             Screen('Flip', window);
@@ -274,9 +275,9 @@ for trial = 1:numTrials
         else
             % Ask for number of times words played
             while true
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-                if length(ans)>1
-                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) ' ): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                if length(ans) > 1 && num2str(any([0:numTones])) == ans
+                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 else
                     break;
                 end
@@ -299,6 +300,9 @@ Screen('CloseAll');
 if ~isdir(['participant_data/', subjectData{1}])
     mkdir(['participant_data/', subjectData{1}]);
 end
+cd(['./Participant_Data/', subjectData{1}]);
+save('subjectData');
+cd ..
 
 %% Functions
 
