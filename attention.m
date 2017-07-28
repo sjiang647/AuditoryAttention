@@ -321,14 +321,6 @@ function playAudio(m)
             m = m';
         end
         newm = repmat(m,2,1);
-        
-        
-        l
-        
-        h
-        
-        l
-        
     else
         toneFrequency = 440 * 2^((m - 69)/12);
         midiTone = sin(2*pi * toneFrequency * toneLength);
