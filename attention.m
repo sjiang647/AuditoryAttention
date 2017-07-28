@@ -23,7 +23,7 @@ names = dir('*.wav');
 audios = cell(length(names));
 for i = 1:length(names)
     audios{i} = audioread(names(i).name);
-    audios{i} = audios{i} * .6;
+    audios{i} = audios{i} * .75;
 end
 cd('..');
 
@@ -31,7 +31,8 @@ cd('..');
 
 % Experiment
 numTrials = 11;
-tonePause = 0.300;
+tonePause = 0.350;
+wordPause = 0.300;
 trialPause = 0.500;
 
 % Auditory tone generation
@@ -42,11 +43,13 @@ testRange = [2 4 6];
 
 % Data saving
 data = zeros(1, numTrials);
-% 1. first name, 2. last name, 3. gender, 4. age [1x1]
-% 5. mean tone, 6. noise type, 7. outlier tone, 8. outlier position [1xnumTrials]
+% 1. first name, 2. last name, 3. gender, 4. age, 5. counterbalancing,
+% 6. tone accuracy, 7. names asked, 8. sounds played, 9. word responses
 subjectData = cell(1, 9);
 
-%% Counterbalance conditions
+%% Generate conditions
+
+% Generate counterbalanced conditions
 
 sequence = randperm(numTrials);
 askWhat = mod(sequence, 2); % 1 if mean, 0 if word
@@ -59,13 +62,28 @@ testDist = testDist .* round(2 * (highLow - 0.5));
 counterbalancing = [askWhat; testDist; focusWhat];
 subjectData{5} = counterbalancing;
 
+% Generate random conditions
+
+nameIndices = randi(length(audios), 1, numTrials);
+setSounds = zeros(numTrials, numTones);
+for i = 1:numTrials
+    setSounds(i,:) = randsample(length(audios), numTones, true);
+end
+
+subjectData{7} = nameIndices;
+subjectData{8} = setSounds;
+
 %% Subject data input
 
+% Input general info
 subjectData{1} = Ask(window, 'First Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
 subjectData{2} = Ask(window, 'Last Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
 subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTop, 25);
 subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
-subjectData{8} = zeros(numTrials, numTones);
+
+% Initialize response cells
+subjectData{6} = repmat(-1, 1, numTrials);
+subjectData{8} = repmat(-1, 1, numTrials);
 
 %% Task instructions
 
@@ -75,14 +93,13 @@ Screen('DrawText', window, 'Press enter to continue', center(1)-windowX/13.5, ce
 Screen('Flip', window);
 KbWait([], 2);
 
-% %% Stimuli display (experiment)
+%% Stimuli display (experiment)
 
 handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
 
 for trial = 1:numTrials
     Screen('Flip', window);
-    trialSettings = counterbalancing(:, trial);
-
+    
     if trial < 4
         %% Audio only
         meanTone = randsample(meanRange, 1);
@@ -92,26 +109,23 @@ for trial = 1:numTrials
         
         for toneNum = 1:numTones
             playAudio(tones(toneNum) + meanTone);
-            WaitSecs(.3);
+            WaitSecs(tonePause);
         end
         
-        audioTaskInstructions(window, rect, meanTone + trialSettings(2));
-        data(trial) = analyzeHighLow(trialSettings(2));
+        audioTaskInstructions(window, rect, meanTone + testDist(trial));
+        data(trial) = analyzeHighLow(testDist(trial));
     elseif trial < 7
         %% Words only
-        numSounds = 3;
-        setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
-        
         showSingleInstructions(window, numTones, rect, 'words');
         
         for toneNum = 1:numTones
-            playAudio(audios{setSounds(toneNum)});
-            WaitSecs(.5);
+            playAudio(audios{setSounds(trial, toneNum)});
+            WaitSecs(tonePause);
         end
         
         % Ask for number of times words played
-        nameToAsk = names(randsample(3,1)).name;
-        res = wordTaskInstructions(window, nameToAsk, numTones);  
+        res = wordTaskInstructions(window, names(nameIndices(trial)).name, numTones);
+        subjectData{9}(trial) = res;
     else
         %% Main Experiment
         showSingleInstructions(window, numTones, rect, 'sets of words and tones');
@@ -120,12 +134,8 @@ for trial = 1:numTrials
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
         
-        %creating set of sounds
-        numSounds = 3;
-        setSounds = randsample(numSounds, 4, true); %creating a random set of sounds
-        
         % Display instructions
-        if trialSettings(1)
+        if focusWhat(trial)
             showFocusInstructions(window, rect, 'Focus on the tones.');
         else
             showFocusInstructions(window, rect, 'Focus on the words.');
@@ -133,25 +143,18 @@ for trial = 1:numTrials
         
         % Loop through and play all tones
         for toneNum = 1:numTones
-            playAudio(audios{setSounds(toneNum)});
-            WaitSecs(.3);
+            playAudio(audios{setSounds(trial, toneNum)});
+            WaitSecs(wordPause);
             playAudio(tones(toneNum) + meanTone);
-            WaitSecs(.3);
+            WaitSecs(tonePause);
         end
         
-        if trialSettings(3)
-            audioTaskInstructions(window, rect, meanTone + trialSettings(2));
-            subjectData{6}(trial) = analyzeHighLow(trialSettings(2));
-        else
-            % Ask for number of times words played
-            nameIndex = randsample(3,1);
-            nameToAsk = names(nameIndex).name;
-            res = wordTaskInstructions(window, nameToAsk, numTones);
-            
-            % Store data
-            subjectData{7}(trial) = nameIndex;
-            subjectData{8}(trial,:) = setSounds;
-            subjectData{9}(trial) = res;
+        if askWhat(trial) % Play test tone
+            audioTaskInstructions(window, rect, meanTone + testDist(trial));
+            subjectData{6}(trial) = analyzeHighLow(testDist(trial));
+        else % Ask for number of times words played
+            res = wordTaskInstructions(window, names(nameIndices(trial)).name, numTones);
+            subjectData{9}(trial) = str2double(res);
         end
     end
     WaitSecs(trialPause);
@@ -258,7 +261,7 @@ function playAudio(m)
     handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
     
     fs = 44100;
-    toneLength = 0:1/fs:.300;
+    toneLength = 0:1/fs:.350;
     freqRamp = 1/(2*.01);
     rampVector = 1:441;
     
