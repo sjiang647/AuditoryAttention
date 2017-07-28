@@ -1,4 +1,3 @@
-
 %% Objective: Test effects of attention on auditory ensemble perception
 
 clear all;
@@ -41,8 +40,8 @@ trialPause = 0.500;
 % Auditory tone generation
 numTones = 6;
 meanRange = 48:72;
-toneRange = [2 4 6];
-outlierRange = [6 8 10 12];
+toneRange = [1 3 5];
+testRange = [2 4 6];
 
 % Auditory frequency generation
 
@@ -81,7 +80,10 @@ askWhat = mod(sequence, 2); % 1 if mean, 0 if word
 highLow = floor(mod(sequence, 4) ./ 2); % 1 if high, 0 if low
 focusWhat = floor(mod(sequence, 8) ./ 4); % 1 if mean, 0 if word
 
-counterbalancing = [askWhat; highLow; focusWhat];
+testDist = testRange(floor(mod(sequence, 24) ./ 8) + 1); % 1, 2, or 3
+testDist = testDist .* round(2 * (highLow - 0.5));
+
+counterbalancing = [askWhat; testDist; focusWhat];
 subjectData{5} = counterbalancing;
 
 %% Subject data input
@@ -111,6 +113,7 @@ Screen('Flip', window);
     if trial < 4
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
+
         Screen('DrawText', window, 'Focus on the tones.', center(1) - 150, center(2));
         Screen('Flip', window);
         KbWait();
@@ -123,16 +126,8 @@ Screen('Flip', window);
         Screen('DrawText', window, 'Press "Return" to continue.', center(1)- 250, center(2));
         Screen('Flip', window);
         KbWait();
-        
-        % Play audio tone
-        
-        offtone = meanTone + meanDiff * round((counterbalancing(2) - 0.5) * 2);
-        playAudio(offtone);
-        
-        %         PsychPortAudio('FillBuffer', handle, toneVectors{toneNum});
-        %         PsychPortAudio('Start', handle, 1, 0, 1);
-        %         WaitSecs(tonePause);
-        %         PsychPortAudio('Stop', handle);
+
+        playAudio(meanTone + trialSettings(2));
         
         % Keyboard instructions
         Screen('DrawText', window, 'Press h if the test tone was higher than the mean.', center(1) - 250, center(2) - 25);
@@ -285,29 +280,29 @@ end
 %% Functions
 
 function playAudio(m)
-handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
-
-toneLength = 0:1/44100:.300;
-freqRamp = 1/(2*(.01));
-rampVector = [1:441];
-fs = 44100;
-offset = (1+sin(2*pi*freqRamp*rampVector./fs + (pi/2)))/2;
-onset = (1+sin(2*pi*freqRamp*rampVector./fs + (-pi/2)))/2;
-if ~isscalar(m)
-    if size(m, 2) < size(m, 1)
-        m = m';
+    handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
+    
+    fs = 44100;
+    toneLength = 0:1/fs:.300;
+    freqRamp = 1/(2*.01);
+    rampVector = 1:441;
+    
+    offset = (1 + sin(2*pi * freqRamp * rampVector ./ fs + (pi/2))) / 2;
+    onset = (1 + sin(2*pi * freqRamp * rampVector ./ fs + (-pi/2))) / 2;
+    
+    if ~isscalar(m)
+        if size(m, 2) < size(m, 1)
+            m = m';
+        end
+        newm = repmat(m,2,1);
+    else
+        toneFrequency = 440 * 2^((m - 69)/12);
+        midiTone = sin(2*pi * toneFrequency * toneLength);
+        midiTone(1:441) = onset .* midiTone(1:441);
+        midiTone(end - 440: end) = offset .* midiTone(end - 440: end);
+        newm = repmat(midiTone, 2, 1); 
     end
-    newm = repmat(m,2,1);
+    
     PsychPortAudio('FillBuffer', handle, newm);
     PsychPortAudio('Start', handle, 1, 0, 1);
-else
-    toneFrequency = 440*2^((m-69)/12);
-    midiTone = sin(2*pi* toneFrequency * toneLength);%creating the tones in terms of frequency
-    midiTone(1:441) = onset .* midiTone(1:441);
-    midiTone(end - 440: end) = offset .* midiTone(end - 440: end);
-    newm = repmat(midiTone, 2, 1); %duplicates the sound in order to hear through headphones
-    PsychPortAudio('FillBuffer', handle, newm);
-    PsychPortAudio('Start', handle, 1, 0, 1);
-end
-
 end
