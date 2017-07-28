@@ -114,11 +114,11 @@ for trial = 1:numTrials
         tones = randsample([-toneRange toneRange], numTones);
 
 
-        Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/10, center(2)); 
+        Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/11, center(2)); 
         Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
         Screen('Flip', window);
         KbWait();
-        Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/10, center(2));
+        Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/11, center(2));
         Screen('Flip', window);
         
         for toneNum = 1:numTones
@@ -164,11 +164,11 @@ for trial = 1:numTrials
         setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
         
 
-        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/10, center(2));
+        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/12, center(2));
         Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
         Screen('Flip', window);
         KbWait();
-        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/10, center(2));
+        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/12, center(2));
         Screen('Flip', window);
         
         for toneNum = 1:numTones
@@ -178,23 +178,20 @@ for trial = 1:numTrials
         
         % Ask for number of times words played
         while true
-            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            ans = Ask(window, ['How many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             if length(ans) > 1
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                ans = Ask(window, ['How many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             else 
                 break;
             end 
         end  
     else
 
-        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/10, center(2));
+        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/12, center(2));
         Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
         Screen('Flip', window);
         KbWait();
-        Screen('DrawText', window, [ num2str(numTones) '  Words will be played.'], center(1) - windowX/10, center(2));
-
-
-
+        Screen('DrawText', window, [ num2str(numTones) '  Words will be played.'], center(1) - windowX/12, center(2));
         Screen('Flip', window);
         
         % 1. what to ask 2. high/low %
@@ -210,12 +207,18 @@ for trial = 1:numTrials
         % Display instructions
         if trialSettings(1)
             Screen('DrawText', window, 'Focus on the tones.', center(1) - windowX/12, center(2));
+            Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
             Screen('Flip', window);
-            
+            KbWait;
+            Screen('DrawText', window, 'Focus on the tones.', center(1) - windowX/12, center(2));
+            Screen('Flip', window); 
         else
             Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/12, center(2));
+            Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2)+windowY/13);
             Screen('Flip', window);
-            
+            KbWait;
+            Screen('DrawText', window, 'Focus on the words.', center(1) - windowX/12, center(2));
+            Screen('Flip', window);;  
         end
         
         
@@ -229,7 +232,7 @@ for trial = 1:numTrials
         
         if trialSettings(3)
             % Audio task instructions
-            Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/12, center(2));
+            Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/10.5, center(2));
             Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2) + windowY/13);
             Screen('Flip', window);
             KbWait();
