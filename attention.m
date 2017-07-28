@@ -38,7 +38,7 @@ tonePause = 0.300;
 trialPause = 0.500;
 
 % Auditory tone generation
-numTones = 6;
+numTones = 4;
 meanRange = 48:72;
 toneRange = [1 3 5];
 testRange = [2 4 6];
@@ -113,7 +113,7 @@ for trial = 1:numTrials
         meanTone = randsample(meanRange, 1);
         tones = randsample([-toneRange toneRange], numTones);
 
-        Screen('DrawText', window, '6 Audio tones will be played. Press "Return" to continue', center(1) - 150, center(2));
+        Screen('DrawText', window, [num2str(numTones) ' Audio tones will be played. Press "Return" to continue'], center(1) - 150, center(2));
         Screen('Flip', window);
         KbWait();
         
@@ -169,25 +169,26 @@ for trial = 1:numTrials
         numSounds = 3;
         setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
         
-        Screen('DrawText', window, '6 Words will be played. Press "Return" to continue.', center(1) - 150, center(2));
+        Screen('DrawText', window, [num2str(numTones) ' Words will be played. Press "Return" to continue.'], center(1) - 150, center(2));
         Screen('Flip', window);
         KbWait();
+        
         for toneNum = 1:numTones
             playAudio(audios{setSounds(toneNum)});
-            WaitSecs(.3);
+            WaitSecs(.5);
         end
         
         % Ask for number of times words played
         while true
-            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             if length(ans) > 1
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             else 
                 break;
             end 
         end  
     else
-        Screen('DrawText', window, '6 words and 6 tones will be played. Press "Return" to continue.', center(1) - 150, center(2));
+        Screen('DrawText', window, [num2str(numTones) ' words and ' num2str(numTones) ' tones will be played. Press "Return" to continue.'], center(1) - 150, center(2));
             Screen('Flip', window);
             KbWait();
         
@@ -265,9 +266,9 @@ for trial = 1:numTrials
         else
             % Ask for number of times words played
             while true
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 if length(ans)>1
-                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (1-6): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
                 else
                     break;
                 end
