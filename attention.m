@@ -161,9 +161,13 @@ for trial = 1:numTrials
         numSounds = 3;
         setSounds = randsample(numSounds, 6, true); %creating a random set of sounds
         
-        Screen('DrawText', window, '6 Words will be played. Press "Return" to continue.', center(1) - 150, center(2));
+        Screen('DrawText', window, '6 Words will be played.', center(1) - windowX/10, center(2));
+        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/12, center(2)+windowY/13);
         Screen('Flip', window);
         KbWait();
+        Screen('DrawText', window, '6 Words will be played.', center(1) - windowX/10, center(2));
+        Screen('Flip', window);
+        
         for toneNum = 1:numTones
             playAudio(audios{setSounds(toneNum)});
             WaitSecs(.3);
@@ -179,9 +183,12 @@ for trial = 1:numTrials
             end 
         end  
     else
-        Screen('DrawText', window, '6 words and 6 tones will be played. Press "Return" to continue.', center(1) - 150, center(2));
-            Screen('Flip', window);
-            KbWait();
+        Screen('DrawText', window, '6 Words will be played.', center(1) - windowX/10, center(2));
+        Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/12, center(2)+windowY/13);
+        Screen('Flip', window);
+        KbWait();
+        Screen('DrawText', window, '6 Words will be played.', center(1) - windowX/10, center(2));
+        Screen('Flip', window);
         
         % 1. what to ask 2. high/low %
         Screen
