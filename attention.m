@@ -116,10 +116,9 @@ for trial = 1:numTrials
 
         Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/10, center(2)); 
         Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/12, center(2)+windowY/13);
-        
         Screen('Flip', window);
         KbWait();
-        Screen('DrawText', window, [num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/10, center(2));
+        Screen('DrawText', window, [ num2str(numTones) ' Audio tones will be played.'], center(1) - windowX/10, center(2));
         Screen('Flip', window);
         
         for toneNum = 1:numTones
@@ -158,6 +157,7 @@ for trial = 1:numTrials
         if (response == 'h' && trialSettings(2)) || (response == 'l' && ~trialSettings(2))
             data(trial) = 1;
         end
+        
     elseif trial < 7
         
         numSounds = 3;
@@ -168,8 +168,6 @@ for trial = 1:numTrials
         Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/12, center(2)+windowY/13);
         Screen('Flip', window);
         KbWait();
-        Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/10, center(2));
-
         Screen('DrawText', window, [num2str(numTones) ' Words will be played.'], center(1) - windowX/10, center(2));
         Screen('Flip', window);
         
@@ -194,6 +192,7 @@ for trial = 1:numTrials
         Screen('Flip', window);
         KbWait();
         Screen('DrawText', window, [ num2str(numTones) '  Words will be played.'], center(1) - windowX/10, center(2));
+
 
 
         Screen('Flip', window);
