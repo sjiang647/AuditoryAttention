@@ -105,7 +105,6 @@ KbWait([], 2);
 handle = PsychPortAudio('Open', [], [], 0, 44100, 2);
 
 for trial = 1:numTrials
-    meanDiff = 2;
     Screen('Flip', window);
     trialSettings = counterbalancing(:, trial);
 
@@ -176,12 +175,13 @@ for trial = 1:numTrials
         end
         
         % Ask for number of times words played
+        nameToAsk = names(randsample(3,1)).name;
         while true
-            ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-            if length(ans) > 1 && ~any([0:numTones] == ans) 
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-            else 
+            res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+            if ismember(str2double(res), 0:numTones)
                 break;
+            else 
+                res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
             end 
         end  
     else
@@ -274,12 +274,12 @@ for trial = 1:numTrials
         else
             % Ask for number of times words played
             while true
-                ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) ' ): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-                if length(ans) > 1 && ~any([0:numTones] == ans) 
-                    ans = Ask(window, ['How  many times was ' names(randsample(3,1)).name ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-                else
+                res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                if ismember(str2double(res), 0:numTones)
                     break;
-                end
+                else 
+                    res = Ask(window, ['How  many times was ' nameToAsk ' played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
+                end 
             end
         end
     end
