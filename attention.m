@@ -95,13 +95,12 @@ subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTo
 subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
 
 %% Task instructions
+
 Screen('DrawText', window, 'You will listen to various audio tones. Pay attention to the various auditory stimuli.', center(1)-420, center(2)-60);
 Screen('DrawText', window, 'At the end of each trial, you will be asked to make an input based on a question asked.', center(1)-450, center(2)-30);
 Screen('DrawText', window, 'Press any button to continue', center(1)-150, center(2));
 Screen('Flip', window); 
 KbWait([], 2);
-
-
 
 %% Stimuli display (experiment)
 
