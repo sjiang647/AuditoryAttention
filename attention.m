@@ -128,7 +128,7 @@ for trial = 1:numTrials
         index = find(names(nameIndices(trial)).name == '.');
             naem = names(nameIndices(trial)).name;
             naem = naem(1:index -1);
-        res = wordTaskInstructions(window, naem, numTones);
+        res = wordTaskInstructions(window, rect, naem, numTones);
         subjectData{9}(trial) = str2double(res);
     else
         %% Main Experiment
@@ -160,7 +160,7 @@ for trial = 1:numTrials
             index = find(names(nameIndices(trial)).name == '.');
             naem = names(nameIndices(trial)).name;
             naem = naem(1:index -1);
-            res = wordTaskInstructions(window, naem, numTones);
+            res = wordTaskInstructions(window, rect, naem, numTones);
             subjectData{9}(trial) = str2double(res);
         end
     end
@@ -216,7 +216,7 @@ function audioTaskInstructions(window, rect, toneToPlay, handle)
     Screen('DrawText', window, 'You will now hear a test tone.', center(1) - windowX/12, center(2));
     Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2) + windowY/13);
     Screen('Flip', window);
-    KbWait();
+    KbWait([], 3);
     playAudio(toneToPlay, handel);
 
     % Keyboard instructions
@@ -225,17 +225,37 @@ function audioTaskInstructions(window, rect, toneToPlay, handle)
     Screen('Flip', window);
 end
 
-function response = wordTaskInstructions(window, nameToAsk, numTones)
-thing = 1
-    while thing == 1
-        res = Ask(window, ['How  many times was the word "' nameToAsk '" played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-        if ismember(str2double(res), [0:numTones])
-            thing = 2;
-        else 
-            res = Ask(window, ['How  many times was the word "' nameToAsk '" played (0-' num2str(numTones) '): '], [],[], 'GetChar', RectLeft, RectTop, 25);
-        end 
+function response = wordTaskInstructions(window, rect, nameToAsk, numTones)
+    windowX = rect(3);
+    windowY = rect(4);
+    center = [windowX/2, windowY/2];
+    
+    % Word task instructions
+    Screen('DrawText', window, 'You will now be asked a question.', center(1) - windowX/12, center(2));
+    Screen('DrawText', window, 'Press ENTER to continue.', center(1) - windowX/11, center(2) + windowY/13);
+    Screen('Flip', window);
+    KbWait([], 3);
+    
+    % Keyboard instructions
+    Screen('DrawText', window, ['How  many times was the word "' nameToAsk '" played?'], center(1) - windowX/5, center(2) - windowY/13);
+    Screen('DrawText', window, ['Press a number from 0 to ' num2str(numTones) '.'], center(1) - windowX/5.1, center(2));
+    Screen('Flip', window);
+    
+    % Check keyboard presses
+    KbName('UnifyKeyNames');
+    done = false;
+    while ~done
+        [keyDown, secs, keyCode, deltaSecs] = KbCheck(-1);
+        key = KbName(find(keyCode));
+        numberKeys = {'0)', '1!', '2@', '3#', '4$', '5%', '6^', '7&', '8*', '9('};
+        
+        for i = 0:numTones
+            if strcmp(key, numberKeys{i + 1})
+                response = str2double(key(1));
+                done = true;
+            end
+        end
     end
-    response = res;
 end
 
 %% Response Analysis
