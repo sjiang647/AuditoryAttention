@@ -11,11 +11,11 @@ clc;
 
 celerey = cell(5);
 
-for i = 1:3 % 4 and 5 are bad
+for i = 1:2
     %% 1. Cleaning data
     
     % Create a matrix for each data
-    celerey{i} =  load(['subject_results/data_' num2str(i) '.mat']);
+    celerey{i} =  load(['new_results/data_' num2str(i) '.mat']);
     
     % Organize data so that outlier distance accounts for both +/-
     asked = celerey{i}.subjectData{5}(1,:);
