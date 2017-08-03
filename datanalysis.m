@@ -42,7 +42,8 @@ for i = 1:5
     end
     testPos = testPos(find(testPos~=0));
     focus = focus(find(focus~=-1));
-    rightwrong = celerey{i}.subjectData{6}(find(celerey{i}.subjectData{6} ~=-1));
+    bongo = celerey{i}.subjectData{6}
+    rightwrong = bongo(find(bongo~=-1));
           
     
 
