@@ -15,7 +15,6 @@
 % subjectData{9} = repmat(-1, 1, numTrials);
 
 
-
 for i = 1:length(names)
     %% 1. Cleaning data
     
@@ -27,70 +26,95 @@ for i = 1:length(names)
     % Organize data so that outlier distance accounts for both +/-
     % subjectData{4}(1,:) is outlier offset
     counterbalancing = celerey{i}.subjectData{5};
+    wordsormean = counterbalancing(1,:);
+    for thing = 9:length(wordsormean)
+       if wordsormean(thing) == 1
+           testPos(thing-8) = counterbalancing(2, thing);
+           focus(thing-8) = counterbalancing(3, thing);
+       else
+           testPos(thing-8) = 0;
+           focus(thing-8) = -1;
+       end
+
+    end
+    testPos = testPos(find(testPos~=0));
+    focus = focus(find(focus~=-1));
+    rightwrong = subjectData{6}(find(subjectData{6}~=-1));
+          
     
+
     % Calculate accuracy
     % subjectData{5} is right/wrong
-    accuracy = celerey{i}.subjectData{5};
-    
-    % Create 'all_data' matrix that combines all data
-    all_data = [counterbalancing; accuracy];
-    
-    % Apply certain row/column to j_fit to compare
-    
-    % ??????
-    
-    %% 2. Flipping data
-    
-    % Since we want to measure % that outlier is higher than mean, we
-    % need to flip data for negative values.
-    
-    % (Hit = 1) in negative outliers are saying ?lower than mean? so we
-    % want to flip that. Vice versa for 0s.
-    
-    % So, for negative outlier distances, we want to flip accuracies of 0s
-    % to 1s and 1s to 0s
-    
-    for j = 1:length(all_data)
-        if all_data(1, j) < 0
-            all_data(3, j) = 1 - all_data(3, j);
-        end
-    end
-    
-    outlier_diffs = [-16 -14 -10 -6 6 10 14 16];
-    accuracy_percentage = zeros(1, 8);
-    for j = 1:length(outlier_diffs)
-        indices = find(all_data(1,:) == outlier_diffs(j));
-        results = all_data(3, indices);
+%     accuracy = celerey{i}.subjectData{5};
+mean_diffs = [-6,-4,-2,2,4,6];
+accuracy_percentage = zeros(1, 6);
+    for j = 1:length(mean_diffs)
+        indices = find(testPos == mean_diffs(j));
+        results = rightwrong(indices);
         accuracy_percentage(j) = mean(results);
-        if outlier_diffs(j) == 14
-            sendAccuracies{i} = results;
-        end
     end
+%     rightcounterforopposite = 0;
     
-%     for thing = 1:length(sendAccuracies)
-%         sendAccuracies{thing} = sendAccuracies{thing};
-%         
+    
+%     % Create 'all_data' matrix that combines all data
+%     all_data = [counterbalancing; accuracy];
+%     
+%     % Apply certain row/column to j_fit to compare
+%     
+%     % ??????
+%     
+%     %% 2. Flipping data
+%     
+%     % Since we want to measure % that outlier is higher than mean, we
+%     % need to flip data for negative values.
+%     
+%     % (Hit = 1) in negative outliers are saying ?lower than mean? so we
+%     % want to flip that. Vice versa for 0s.
+%     
+%     % So, for negative outlier distances, we want to flip accuracies of 0s
+%     % to 1s and 1s to 0s
+%     
+%     for j = 1:length(all_data)
+%         if all_data(1, j) < 0
+%             all_data(3, j) = 1 - all_data(3, j);
+%         end
 %     end
-    %% 3. Calling jfit
-    
-    % Make sure j_fit.m is in same folder as your analysis.m
-    % Call in j_fit within your analysis.m code
-    
-    % ** You do not have to directly make changes on j_fit.m file
-    
-    
-    [a_cond1, b_cond1] = j_fit(all_data(1,:)', all_data(3,:)','logistic1',2);
-    
-    sendPvalues(i) = b_cond1;
-    
-    sendAll = {sendPvalues; sendAccuracies};
-    if ~isdir(['Group5Send/', names{i}])
-        mkdir(['Group5Send/', names{i}]);
-    end
-    
-    cd(['Group5Send/', names{i}]);
-    save('data', 'sendAll');
-    cd ..
-    cd ..
+%     
+%     outlier_diffs = [-16 -14 -10 -6 6 10 14 16];
+%     accuracy_percentage = zeros(1, 8);
+%     for j = 1:length(outlier_diffs)
+%         indices = find(all_data(1,:) == outlier_diffs(j));
+%         results = all_data(3, indices);
+%         accuracy_percentage(j) = mean(results);
+%         if outlier_diffs(j) == 14
+%             sendAccuracies{i} = results;
+%         end
+%     end
+%     
+% %     for thing = 1:length(sendAccuracies)
+% %         sendAccuracies{thing} = sendAccuracies{thing};
+% %         
+% %     end
+%     %% 3. Calling jfit
+%     
+%     % Make sure j_fit.m is in same folder as your analysis.m
+%     % Call in j_fit within your analysis.m code
+%     
+%     % ** You do not have to directly make changes on j_fit.m file
+%     
+%     
+    [a_cond1, b_cond1] = j_fit(mean_diffs', accuracy_percentage','logistic1',2);
+%     
+%     sendPvalues(i) = b_cond1;
+%     
+%     sendAll = {sendPvalues; sendAccuracies};
+%     if ~isdir(['Group5Send/', names{i}])
+%         mkdir(['Group5Send/', names{i}]);
+%     end
+%     
+%     cd(['Group5Send/', names{i}]);
+%     save('data', 'sendAll');
+%     cd ..
+%     cd ..
 end
 
