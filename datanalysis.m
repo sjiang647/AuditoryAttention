@@ -13,7 +13,7 @@ celerey = cell(1, 5);
 paramatrixa = zeros(5, 2);
 paramatrixb = zeros(5, 2);
 
-for i = 1:3
+for i = 1:4
     % Create a matrix for each data
     celerey{i} =  load(['new_results/data_' num2str(i) '.mat']);
     celerey{i}.subjectData
@@ -63,7 +63,7 @@ datarray = cell(1, 5);
 % focus/ask: 1 = word/word, 2 = tone/word, 3 = word/tone, 4 = tone/tone
 accuracies = zeros(4, 5);
 
-for i = 1:3
+for i = 1:4
     data = load(['new_results/data_' num2str(i) '.mat']);
     datarray{i} = data.subjectData;
     % Ignore first 8 trials
