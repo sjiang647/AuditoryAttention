@@ -1,3 +1,6 @@
+clear all
+close all
+clc
 % general outlines of autastic in 2017 2.0
 
 %% Psychometric curve analysis
@@ -15,7 +18,7 @@
 % subjectData{9} = repmat(-1, 1, numTrials);
 
 
-for i = 1:length(names)
+for i = 1:5
     %% 1. Cleaning data
     
     % Iteratively call in individual subject data
@@ -39,7 +42,7 @@ for i = 1:length(names)
     end
     testPos = testPos(find(testPos~=0));
     focus = focus(find(focus~=-1));
-    rightwrong = subjectData{6}(find(subjectData{6}~=-1));
+    rightwrong = celerey{i}.subjectData{6}(find(celerey{i}.subjectData{6} ~=-1));
           
     
 
@@ -103,7 +106,7 @@ accuracy_percentage = zeros(1, 6);
 %     % ** You do not have to directly make changes on j_fit.m file
 %     
 %     
-    [a_cond1, b_cond1] = j_fit(mean_diffs', accuracy_percentage','logistic1',2);
+    [a_cond1, b_cond1] = j_fit(testPos', rightwrong','logistic1',2);
 %     
 %     sendPvalues(i) = b_cond1;
 %     
