@@ -1,113 +1,58 @@
-clear all
-close all
-clc
-% general outlines of autastic in 2017 2.0
+%% general outlines of autastic in 2017 2.0
+
+clear all;
+close all;
+clc;
+
+% 1. first name, 2. last name, 3. gender, 4. age, 5. counterbalancing,
+% 6. tone accuracy, 7. names asked, 8. sounds played, 9. word responses
 
 %% Psychometric curve analysis
- %subjectData{1} = Ask(window, 'First Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
-% subjectData{2} = Ask(window, 'Last Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
-% subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTop, 25);
-% subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
-%   counterbalancing = [askWhat; testDist; focusWhat];
-%   askWhat = [randi([0, 1], 1, 2 * numTests) mod(sequence, 2)]; % 1 if mean, 0 if word
-%   highLow = [randi([0, 1], 1, 2 * numTests) floor(mod(sequence, 4) ./ 2)]; % 1 if high, 0 if low
-%   focusWhat = [randi([0, 1], 1, 2 * numTests) floor(mod(sequence, 8) ./ 4)]; % 1 if mean, 0 if word
-% subjectData{5} = counterbalancing;
-% subjectData{7} = nameIndices;
-% subjectData{8} = setSounds;
-% subjectData{9} = repmat(-1, 1, numTrials);
 
+celerey = cell(5);
 
-for i = 1:5
+for i = 1:3 % 4 and 5 are bad
     %% 1. Cleaning data
-    
-    % Iteratively call in individual subject data
     
     % Create a matrix for each data
     celerey{i} =  load(['subject_results/data_' num2str(i) '.mat']);
     
     % Organize data so that outlier distance accounts for both +/-
-    % subjectData{4}(1,:) is outlier offset
-    counterbalancing = celerey{i}.subjectData{5};
-    wordsormean = counterbalancing(1,:);
-    for thing = 9:length(wordsormean)
-       if wordsormean(thing) == 1
-           testPos(thing-8) = counterbalancing(2, thing);
-           focus(thing-8) = counterbalancing(3, thing);
-       else
-           testPos(thing-8) = 0;
-           focus(thing-8) = -1;
+    asked = celerey{i}.subjectData{5}(1,:);
+    distanced = celerey{i}.subjectData{5}(2,:);
+    focused = celerey{i}.subjectData{5}(3,:);
+    responded = celerey{i}.subjectData{6};
+    
+    testPos = zeros(2, 48); % row 1 = focus, row 2 = no focus
+    response = zeros(2, 48); % row 1 = focus, row 2 = no focus
+    focusIndex = 1;
+    ignoreIndex = 1;
+    
+    for thing = 9:200
+       if asked(thing) % if tone was asked
+           if focused(thing) % if subject focused on tone
+               testPos(1, focusIndex) = distanced(thing);
+               if distanced(thing) > 0 
+                   response(1, focusIndex) = responded(thing);
+               else % flip data if negative dist
+                   response(1, focusIndex) = 1 - responded(thing);
+               end
+               focusIndex = focusIndex + 1;
+           else % if subject focused on word
+               testPos(2, ignoreIndex) = distanced(thing);
+               if distanced(thing) > 0 
+                   response(2, ignoreIndex) = responded(thing);
+               else % flip data if negative dist
+                   response(2, ignoreIndex) = 1 - responded(thing);
+               end
+               ignoreIndex = ignoreIndex + 1;
+           end
        end
-
     end
-    testPos = testPos(find(testPos~=0));
-    focus = focus(find(focus~=-1));
-    rightwrong = celerey{i}.subjectData{6}(find(celerey{i}.subjectData{6} ~=-1));
-          
     
-
-    % Calculate accuracy
-    % subjectData{5} is right/wrong
-%     accuracy = celerey{i}.subjectData{5};
-mean_diffs = [-6,-4,-2,2,4,6];
-accuracy_percentage = zeros(1, 6);
-    for j = 1:length(mean_diffs)
-        indices = find(testPos == mean_diffs(j));
-        results = rightwrong(indices);
-        accuracy_percentage(j) = mean(results);
-    end
-%     rightcounterforopposite = 0;
+    [a_cond1, b_cond1] = j_fit(testPos(1,:)', response(1,:)','logistic1',2);
+    [a_cond2, b_cond2] = j_fit(testPos(2,:)', response(2,:)','logistic1',2);
     
-    
-%     % Create 'all_data' matrix that combines all data
-%     all_data = [counterbalancing; accuracy];
-%     
-%     % Apply certain row/column to j_fit to compare
-%     
-%     % ??????
-%     
-%     %% 2. Flipping data
-%     
-%     % Since we want to measure % that outlier is higher than mean, we
-%     % need to flip data for negative values.
-%     
-%     % (Hit = 1) in negative outliers are saying ?lower than mean? so we
-%     % want to flip that. Vice versa for 0s.
-%     
-%     % So, for negative outlier distances, we want to flip accuracies of 0s
-%     % to 1s and 1s to 0s
-%     
-%     for j = 1:length(all_data)
-%         if all_data(1, j) < 0
-%             all_data(3, j) = 1 - all_data(3, j);
-%         end
-%     end
-%     
-%     outlier_diffs = [-16 -14 -10 -6 6 10 14 16];
-%     accuracy_percentage = zeros(1, 8);
-%     for j = 1:length(outlier_diffs)
-%         indices = find(all_data(1,:) == outlier_diffs(j));
-%         results = all_data(3, indices);
-%         accuracy_percentage(j) = mean(results);
-%         if outlier_diffs(j) == 14
-%             sendAccuracies{i} = results;
-%         end
-%     end
-%     
-% %     for thing = 1:length(sendAccuracies)
-% %         sendAccuracies{thing} = sendAccuracies{thing};
-% %         
-% %     end
-%     %% 3. Calling jfit
-%     
-%     % Make sure j_fit.m is in same folder as your analysis.m
-%     % Call in j_fit within your analysis.m code
-%     
-%     % ** You do not have to directly make changes on j_fit.m file
-%     
-%     
-    [a_cond1, b_cond1] = j_fit(testPos', rightwrong','logistic1',2);
-%     
 %     sendPvalues(i) = b_cond1;
 %     
 %     sendAll = {sendPvalues; sendAccuracies};
