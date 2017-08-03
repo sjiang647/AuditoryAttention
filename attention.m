@@ -129,7 +129,7 @@ for trial = 1:numTrials
             naem = names(nameIndices(trial)).name;
             naem = naem(1:index -1);
         res = wordTaskInstructions(window, rect, naem, numTones);
-        subjectData{9}(trial) = str2double(res);
+        subjectData{9}(trial) = res;
     else
         %% Main Experiment
         showSingleInstructions(window, numTones, rect, 'sets of words and tones');
