@@ -9,13 +9,14 @@ clc;
 
 %% Psychometric curve analysis
 
-celerey = cell(5);
+celerey = cell(1, 5);
+paramatrixa = zeros(5, 2);
+paramatrixb = zeros(5, 2);
 
-for i = 1:2
-    %% 1. Cleaning data
-    
+for i = 1:3
     % Create a matrix for each data
     celerey{i} =  load(['new_results/data_' num2str(i) '.mat']);
+    celerey{i}.subjectData
     
     % Organize data so that outlier distance accounts for both +/-
     asked = celerey{i}.subjectData{5}(1,:);
@@ -52,17 +53,33 @@ for i = 1:2
     
     [a_cond1, b_cond1] = j_fit(testPos(1,:)', response(1,:)','logistic1',2);
     [a_cond2, b_cond2] = j_fit(testPos(2,:)', response(2,:)','logistic1',2);
-    
-%     sendPvalues(i) = b_cond1;
-%     
-%     sendAll = {sendPvalues; sendAccuracies};
-%     if ~isdir(['Group5Send/', names{i}])
-%         mkdir(['Group5Send/', names{i}]);
-%     end
-%     
-%     cd(['Group5Send/', names{i}]);
-%     save('data', 'sendAll');
-%     cd ..
-%     cd ..
+    paramatrixa(i,:) = [a_cond1 a_cond2];
+    paramatrixb(i,:) = [b_cond1 b_cond2];
 end
 
+%% Basic accuracy analysis
+
+datarray = cell(1, 5);
+% focus/ask: 1 = word/word, 2 = tone/word, 3 = word/tone, 4 = tone/tone
+accuracies = zeros(4, 5);
+
+for i = 1:3
+    data = load(['new_results/data_' num2str(i) '.mat']);
+    datarray{i} = data.subjectData;
+    % Ignore first 8 trials
+    for j = 9:200
+        % subjectData{5} is the counterbalancing matrix
+        asked = datarray{i}{5}(1, j);
+        focused = datarray{i}{5}(3, j);
+        index = (focused + 1) + 2 * asked;
+        if asked % tone was played
+            accuracies(index, i) = accuracies(index, i) + datarray{i}{6}(j);
+        else % word was played
+            num = sum(datarray{i}{8}(j,:) == datarray{i}{7}(j));
+            accuracies(index, i) = accuracies(index, i) + (num == datarray{i}{9}(j));
+        end
+    end
+end
+
+% Calculate mean
+accuracies = accuracies ./ 48;
