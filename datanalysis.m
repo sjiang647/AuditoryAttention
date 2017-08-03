@@ -22,7 +22,7 @@ for i = 1:3 % 4 and 5 are bad
     distanced = celerey{i}.subjectData{5}(2,:);
     focused = celerey{i}.subjectData{5}(3,:);
     responded = celerey{i}.subjectData{6};
-    
+
     testPos = zeros(2, 48); % row 1 = focus, row 2 = no focus
     response = zeros(2, 48); % row 1 = focus, row 2 = no focus
     focusIndex = 1;
