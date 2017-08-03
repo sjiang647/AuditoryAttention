@@ -5,7 +5,10 @@
 % subjectData{2} = Ask(window, 'Last Name: ', [],[], 'GetChar', RectLeft, RectTop, 25);
 % subjectData{3} = Ask(window, 'Gender(M/F): ', [],[], 'GetChar', RectLeft, RectTop, 25);
 % subjectData{4} = str2double(Ask(window, 'Age: ', [],[], 'GetChar', RectLeft, RectTop, 25));
-% counterbalancing = [askWhat; testDist; focusWhat];
+%   counterbalancing = [askWhat; testDist; focusWhat];
+%   askWhat = [randi([0, 1], 1, 2 * numTests) mod(sequence, 2)]; % 1 if mean, 0 if word
+%   highLow = [randi([0, 1], 1, 2 * numTests) floor(mod(sequence, 4) ./ 2)]; % 1 if high, 0 if low
+%   focusWhat = [randi([0, 1], 1, 2 * numTests) floor(mod(sequence, 8) ./ 4)]; % 1 if mean, 0 if word
 % subjectData{5} = counterbalancing;
 % subjectData{7} = nameIndices;
 % subjectData{8} = setSounds;
@@ -23,7 +26,7 @@ for i = 1:length(names)
     
     % Organize data so that outlier distance accounts for both +/-
     % subjectData{4}(1,:) is outlier offset
-    counterbalancing = celerey{i}.subjectData{4};
+    counterbalancing = celerey{i}.subjectData{5};
     
     % Calculate accuracy
     % subjectData{5} is right/wrong
